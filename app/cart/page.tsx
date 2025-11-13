@@ -8,9 +8,10 @@ import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ShoppingCart } from "lucide-react"
-import { Header } from "@/components/sheard/header"
+
 import { Footer } from "@/components/sheard/footer"
 import { CartItemCard } from "@/components/card/cart-item-card"
+import { useCart } from "@/hooks/use-cart"
 
 export default function CartPage() {
   const { cart, removeItem, updateQuantity, totalPrice, clearCart } = useCart()
@@ -18,7 +19,7 @@ export default function CartPage() {
   if (cart.length === 0) {
     return (
       <div className="flex flex-col min-h-screen bg-background">
-        <Header />
+   
 
         <div className="flex-1 flex items-center justify-center py-20">
           <div className="text-center">
@@ -49,7 +50,7 @@ export default function CartPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <Header />
+ 
 
       <section className="bg-gradient-to-r from-primary/10 to-accent/10 py-8 md:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
