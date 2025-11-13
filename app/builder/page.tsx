@@ -11,7 +11,7 @@ import Link from "next/link"
 import { ChevronLeft, ShoppingCart, X } from "lucide-react"
 import { usePizzaBuilder } from "@/hooks/use-pizza-builder"
 import { useCart } from "@/hooks/use-cart"
-import { Header } from "@/components/sheard/header"
+
 import { StepIndicator } from "@/components/step-indicator"
 import { SelectionGrid } from "@/components/selection-grid"
 import { Button } from "@/components/ui/button"
@@ -86,7 +86,7 @@ export default function BuilderPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <Header />
+
 
       <div className="flex-1 py-8 md:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

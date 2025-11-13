@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 import { MapPin, Clock, CreditCard } from "lucide-react"
 import { useCart } from "@/hooks/use-cart"
 import Link from "next/link"
-import { Header } from "@/components/sheard/header"
+
 import { Footer } from "@/components/sheard/footer"
 
 export default function CheckoutPage() {
@@ -33,7 +33,7 @@ export default function CheckoutPage() {
   if (cart.length === 0) {
     return (
       <div className="flex flex-col min-h-screen bg-background">
-        <Header />
+
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <p className="text-lg mb-4">Your cart is empty</p>
@@ -67,7 +67,7 @@ export default function CheckoutPage() {
   if (orderPlaced) {
     return (
       <div className="flex flex-col min-h-screen bg-background">
-        <Header />
+      
 
         <div className="flex-1 flex items-center justify-center py-20">
           <div className="text-center max-w-md">
@@ -121,7 +121,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <Header />
+ 
 
       <section className="bg-gradient-to-r from-primary/10 to-accent/10 py-8 md:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
