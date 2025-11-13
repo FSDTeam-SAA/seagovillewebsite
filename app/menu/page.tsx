@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { useCart } from "@/hooks/use-cart"
 import { usePizzasByCategoryQuery } from "@/hooks/use-pizzas-query"
-import { Header } from "@/components/sheard/header"
+
 import { PizzaFilterTabs } from "@/components/pizza/pizza-filter-tabs"
 import { PizzaCard } from "@/components/pizza/pizza-card"
 import { Footer } from "@/components/sheard/footer"
@@ -38,7 +38,7 @@ export default function MenuPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <Header />
+
 
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-primary/10 to-accent/10 py-12 md:py-16">
