@@ -1,16 +1,8 @@
-/**
- * Home page - Features hero section and featured pizzas
- */
+
 
 "use client";
 
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
-import { Footer } from "@/components/sheard/footer";
-
-import Image from "next/image";
-import Navbar from "@/components/sheard/Navbar";
 import Hero from "@/components/sheard/Hero";
 import SingnaturePizza from "@/components/signaturepiczza/SingnaturePizza";
 import CreateOwnPizza from "@/components/home/CreateOwnPizza";
