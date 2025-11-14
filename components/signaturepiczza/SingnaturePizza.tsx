@@ -4,16 +4,19 @@ import { FEATURED_PIZZAS } from "@/lib/constants";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { useCart } from "@/hooks/use-cart";
+import { toast } from "sonner";
 
 const SingnaturePizza = () => {
   const { addItem } = useCart();
   const handleAddToCart = (pizza: (typeof FEATURED_PIZZAS)[0]) => {
+    toast.success("WoW Succesfuly added the pizza in your cart");
     addItem({
       id: `${pizza.id}`,
       pizzaId: pizza.id,
       name: pizza.name,
       price: pizza.price,
       quantity: 1,
+      time:'30',
     });
   };
 

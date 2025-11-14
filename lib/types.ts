@@ -6,6 +6,7 @@ export interface Pizza {
   id: string
   name: string
   description: string
+  time:string
   image: string
   price: number
   rating: number
@@ -59,6 +60,7 @@ export interface PizzaBuilderState {
 
 export interface CartItem {
   id: string
+  time:string;
   pizzaId?: string
   name: string
   price: number

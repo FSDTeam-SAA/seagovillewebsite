@@ -9,6 +9,7 @@ import { Trash2, Minus, Plus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { CartItem } from "@/lib/types"
+import Image from "next/image"
 
 interface CartItemCardProps {
   item: CartItem
@@ -18,7 +19,10 @@ interface CartItemCardProps {
 
 export function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardProps) {
   return (
-    <div className="flex gap-4 py-4 border-b border-border last:border-b-0">
+    <div className="flex gap-4 py-4 border-b items-center border-border last:border-b-0">
+      <div>
+        <Image src={'/images/default.jpg'} alt="defauld image" width={80} height={80} className=" rounded-2xl w-full aspect-square object-cover" />
+      </div>
       <div className="flex-1">
         <h3 className="font-semibold mb-1">{item.name}</h3>
         <p className="text-sm text-muted-foreground mb-3">${item.price.toFixed(2)} each</p>

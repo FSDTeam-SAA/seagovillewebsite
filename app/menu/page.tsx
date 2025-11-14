@@ -15,6 +15,7 @@ import { usePizzasByCategoryQuery } from "@/hooks/use-pizzas-query";
 import { PizzaFilterTabs } from "@/components/pizza/pizza-filter-tabs";
 import { PizzaCard } from "@/components/sheard/pizza-card";
 import { Footer } from "@/components/sheard/footer";
+import { toast } from "sonner";
 
 export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -29,12 +30,14 @@ export default function MenuPage() {
   );
 
   const handleAddToCart = (pizza: (typeof pizzas)[0]) => {
+    toast.success('WoW Succesfuly added the pizza in your cart')
     addItem({
       id: `${pizza.id}`,
       pizzaId: pizza.id,
       name: pizza.name,
       price: pizza.price,
       quantity: 1,
+      time:'40'
     });
   };
 
@@ -124,7 +127,6 @@ export default function MenuPage() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }
