@@ -33,33 +33,36 @@ const OurJourney = () => {
   ];
 
   return (
-    <section className="relative bg-[url('/images/journey.jpg')] bg-cover bg-center py-24">
+    <section className="relative bg-[url('/images/journey.jpg') bg-cover bg-center py-24">
       {/* RED CENTER LINE */}
-      <div className="absolute left-1/2 top-0 h-full w-[3px] -translate-x-1/2 bg-red-600"></div>
 
       <div className="max-w-6xl mx-auto relative">
         <header className="text-center mb-20">
-          <h1 className="text-3xl md:text-4xl font-bold text-[#343A40] mb-2 font-lobster">Our Journey</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-[#343A40] mb-2 font-lobster">
+            Our Journey
+          </h1>
           <p className="text-xs md:text-sm text-[#6C757D] leading-relaxed font-normal max-w-2xl mx-auto">
             From humble beginnings to community favorite
           </p>
         </header>
 
-        <div className="relative space-y-24">
+        <div className="relative space-y-16">
+          <div className="hidden md:flex absolute left-1/2 top-0 h-full w-[3px]  -translate-x-1/2 bg-red-600"></div>
+
           {journey.map((item, i) => (
             <div
               key={i}
               className={`relative flex ${
                 item.side === "left"
-                  ? "justify-start md:pr-[52%]"
-                  : "justify-end md:pl-[52%]"
+                  ? "justify-start md:pr-[48%] text-end"
+                  : "justify-end md:pl-[48%]"
               }`}
             >
               {/* Timeline Dot */}
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-5 w-5 bg-white border-4 border-red-600 rounded-full z-10"></div>
+              <div className=" hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-5 w-5 bg-white border-4 border-red-600 rounded-full z-10"></div>
 
               {/* Card */}
-              <div className="bg-white shadow-xl rounded-xl p-8 w-full md:w-[48%]">
+              <div className="bg-white shadow-xl rounded-xl p-8 w-full md:w-[90%]">
                 <span className="text-xs tracking-wider bg-red-100 text-red-500 py-1 px-3 rounded-full inline-block mb-3">
                   {item.year}
                 </span>
