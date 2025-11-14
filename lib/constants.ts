@@ -2,35 +2,107 @@
  * Application constants and static data
  */
 
-import type { Size, Crust, Sauce, Cheese, Topping, Pizza } from "./types"
+import type { Size, Crust, Sauce, Cheese, Topping, Pizza } from "./types";
 
 export const SIZES: Size[] = [
   { id: "small", name: 'Small 10"', inches: 10, slices: 4, priceModifier: 0 },
-  { id: "medium", name: 'Medium 12"', inches: 12, slices: 6, priceModifier: 2.5 },
+  {
+    id: "medium",
+    name: 'Medium 12"',
+    inches: 12,
+    slices: 6,
+    priceModifier: 2.5,
+  },
   { id: "large", name: 'Large 14"', inches: 14, slices: 8, priceModifier: 5 },
-  { id: "xlarge", name: 'X-Large 16"', inches: 16, slices: 10, priceModifier: 7.5 },
-]
+  {
+    id: "xlarge",
+    name: 'X-Large 16"',
+    inches: 16,
+    slices: 10,
+    priceModifier: 7.5,
+  },
+];
 
 export const CRUSTS: Crust[] = [
-  { id: "hand-tossed", name: "Hand Tossed", description: "Classic, fluffy crust", priceModifier: 0 },
-  { id: "thin-crispy", name: "Thin & Crispy", description: "Light and crunchy", priceModifier: 0 },
-  { id: "deep-dish", name: "Deep Dish", description: "Thick and hearty", priceModifier: 2 },
-  { id: "stuffed", name: "Stuffed Crust", description: "Cheese filled edge", priceModifier: 2 },
-]
+  {
+    id: "hand-tossed",
+    name: "Hand Tossed",
+    description: "Classic, fluffy crust",
+    priceModifier: 0,
+  },
+  {
+    id: "thin-crispy",
+    name: "Thin & Crispy",
+    description: "Light and crunchy",
+    priceModifier: 0,
+  },
+  {
+    id: "deep-dish",
+    name: "Deep Dish",
+    description: "Thick and hearty",
+    priceModifier: 2,
+  },
+  {
+    id: "stuffed",
+    name: "Stuffed Crust",
+    description: "Cheese filled edge",
+    priceModifier: 2,
+  },
+];
 
 export const SAUCES: Sauce[] = [
-  { id: "classic-tomato", name: "Classic Tomato", description: "Traditional pizza sauce", priceModifier: 0 },
-  { id: "creamy-alfredo", name: "Creamy Alfredo", description: "Rich and creamy", priceModifier: 0.5 },
-  { id: "bbq-sauce", name: "BBQ Sauce", description: "Sweet and tangy", priceModifier: 0.5 },
-  { id: "garlic-butter", name: "Garlic Butter", description: "Aromatic and savory", priceModifier: 0.5 },
-]
+  {
+    id: "classic-tomato",
+    name: "Classic Tomato",
+    description: "Traditional pizza sauce",
+    priceModifier: 0,
+  },
+  {
+    id: "creamy-alfredo",
+    name: "Creamy Alfredo",
+    description: "Rich and creamy",
+    priceModifier: 0.5,
+  },
+  {
+    id: "bbq-sauce",
+    name: "BBQ Sauce",
+    description: "Sweet and tangy",
+    priceModifier: 0.5,
+  },
+  {
+    id: "garlic-butter",
+    name: "Garlic Butter",
+    description: "Aromatic and savory",
+    priceModifier: 0.5,
+  },
+];
 
 export const CHEESES: Cheese[] = [
-  { id: "mozzarella", name: "Mozzarella", description: "Classic, fluffy", priceModifier: 0 },
-  { id: "cheddar", name: "Cheddar", description: "Light and crunchy", priceModifier: 0.5 },
-  { id: "mixed-cheese", name: "Mixed Cheese", description: "Perfect blend", priceModifier: 0.5 },
-  { id: "no-cheese", name: "No Cheese", description: "Just sauce and toppings", priceModifier: -1.5 },
-]
+  {
+    id: "mozzarella",
+    name: "Mozzarella",
+    description: "Classic, fluffy",
+    priceModifier: 0,
+  },
+  {
+    id: "cheddar",
+    name: "Cheddar",
+    description: "Light and crunchy",
+    priceModifier: 0.5,
+  },
+  {
+    id: "mixed-cheese",
+    name: "Mixed Cheese",
+    description: "Perfect blend",
+    priceModifier: 0.5,
+  },
+  {
+    id: "no-cheese",
+    name: "No Cheese",
+    description: "Just sauce and toppings",
+    priceModifier: -1.5,
+  },
+];
 
 export const TOPPINGS: Topping[] = [
   // Meat
@@ -42,24 +114,31 @@ export const TOPPINGS: Topping[] = [
   // Vegetables
   { id: "mushroom", name: "Mushrooms", category: "vegetable", price: 0.75 },
   { id: "onion", name: "Onions", category: "vegetable", price: 0.5 },
-  { id: "bell-pepper", name: "Bell Peppers", category: "vegetable", price: 0.75 },
+  {
+    id: "bell-pepper",
+    name: "Bell Peppers",
+    category: "vegetable",
+    price: 0.75,
+  },
   { id: "olives", name: "Black Olives", category: "vegetable", price: 0.75 },
   { id: "spinach", name: "Fresh Spinach", category: "vegetable", price: 0.75 },
 
   // Extra
   { id: "extra-cheese", name: "Extra Cheese", category: "extra", price: 1 },
   { id: "garlic-knots", name: "Garlic Knots", category: "extra", price: 2 },
-]
+];
 
 export const FEATURED_PIZZAS: Pizza[] = [
   {
     id: "classic-pepperoni",
     name: "Classic Pepperoni",
-    description: "Traditional pepperoni with mozzarella cheese and our signature tomato sauce",
+    description:
+      "Traditional pepperoni with mozzarella cheese and our signature tomato sauce",
     image: "/pizza1.jpg",
     price: 12.99,
     rating: 4.8,
     category: "classic",
+    time: "30",
   },
   {
     id: "meat-lovers",
@@ -69,6 +148,7 @@ export const FEATURED_PIZZAS: Pizza[] = [
     price: 16.99,
     rating: 4.9,
     category: "meat",
+    time: "30",
   },
   {
     id: "veggie-delight",
@@ -78,6 +158,7 @@ export const FEATURED_PIZZAS: Pizza[] = [
     price: 13.99,
     rating: 4.7,
     category: "veggie",
+    time: "30",
   },
   {
     id: "bbq-chicken",
@@ -87,6 +168,7 @@ export const FEATURED_PIZZAS: Pizza[] = [
     price: 14.99,
     rating: 4.6,
     category: "specialty",
+    time: "30",
   },
   {
     id: "supreme",
@@ -96,6 +178,7 @@ export const FEATURED_PIZZAS: Pizza[] = [
     price: 15.99,
     rating: 4.8,
     category: "specialty",
+    time: "30",
   },
   {
     id: "margherita",
@@ -105,8 +188,9 @@ export const FEATURED_PIZZAS: Pizza[] = [
     price: 13.49,
     rating: 4.9,
     category: "classic",
+    time: "30",
   },
-]
+];
 
 export const ALL_PIZZAS: Pizza[] = [
   ...FEATURED_PIZZAS,
@@ -118,6 +202,7 @@ export const ALL_PIZZAS: Pizza[] = [
     price: 14.49,
     rating: 4.5,
     category: "specialty",
+    time: "30",
   },
   {
     id: "white-pizza",
@@ -127,6 +212,7 @@ export const ALL_PIZZAS: Pizza[] = [
     price: 13.99,
     rating: 4.6,
     category: "specialty",
+    time: "30",
   },
   {
     id: "buffalo-chicken",
@@ -136,6 +222,7 @@ export const ALL_PIZZAS: Pizza[] = [
     price: 15.49,
     rating: 4.7,
     category: "specialty",
+    time: "30",
   },
   {
     id: "philly-cheesesteak",
@@ -145,5 +232,6 @@ export const ALL_PIZZAS: Pizza[] = [
     price: 15.99,
     rating: 4.8,
     category: "meat",
+    time: "30",
   },
-]
+];

@@ -22,7 +22,7 @@ import Subscribe from "@/components/sheard/Subscribe";
 export default function Home() {
   return (
     <div className="">
-      <Navbar />
+      
       <Hero />
       <SingnaturePizza />
       <CreateOwnPizza />
@@ -30,7 +30,7 @@ export default function Home() {
       <OurClientSay />
       <FAQ />
       <Subscribe />
-      <Footer />
+
     </div>
   );
 }

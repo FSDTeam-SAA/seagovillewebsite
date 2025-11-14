@@ -20,8 +20,8 @@ export function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
               className={`
                 w-10 h-10 rounded-full flex items-center justify-center font-bold
                 transition-all
-                ${isActive ? "bg-primary text-primary-foreground ring-4 ring-primary/30" : ""}
-                ${isCompleted ? "bg-primary text-primary-foreground" : ""}
+                ${isActive ? "bg-[#D62828] text-primary-foreground ring-4 ring-primary/30" : ""}
+                ${isCompleted ? "bg-[#D62828] text-primary-foreground" : ""}
                 ${!isActive && !isCompleted ? "bg-border text-muted-foreground" : ""}
               `}
             >
