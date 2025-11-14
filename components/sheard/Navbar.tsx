@@ -4,21 +4,19 @@ import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Menu, Search, ShoppingCart } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
+import Image from "next/image";
 
 const Navbar = () => {
   const { totalItems } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-[#00000066] text-white border-b border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50! bg-[#0000003b] backdrop-blur-3xl py-5 text-white  ">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
-              🍕
-            </div>
-            <span className="text-foreground">Seagoville Pizza</span>
+          <Link href="/" className="">
+            <Image src={'/logo.png'} alt="logo" width={120} height={80}  className=" w-full aspect-square object-cover py-2.5 "/>
           </Link>
 
           {/* Desktop Navigation */}

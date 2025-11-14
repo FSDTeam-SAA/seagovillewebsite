@@ -147,7 +147,7 @@ const CreateOwnPizza = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-amber-50/10 to-transparent"></div>
 
               {/* Tomato icon positioned in the middle at top */}
-              <div className="absolute -top-6 left-[20%] transform -translate-x-[20%] bg-white p-2 rounded-md  shadow-lg z-50">
+              <div className="absolute -top-6 left-[20%] transform -translate-x-[20%] bg-white p-2 rounded-md  shadow-lg z-20">
                 <Image
                   src={"/icon/tomato.svg"}
                   alt="tomato"
@@ -157,7 +157,7 @@ const CreateOwnPizza = () => {
                 />
               </div>
               {/* left mid   cheese*/}
-              <div className="absolute bottom-[20%]  -left-6 -translate-y-[20%] bg-white p-2 rounded-md shadow-lg z-50">
+              <div className="absolute bottom-[20%]  -left-6 -translate-y-[20%] bg-white p-2 rounded-md shadow-lg z-20">
                 <Image
                   src={"/icon/cheese.svg"}
                   alt="tomato"
@@ -167,7 +167,7 @@ const CreateOwnPizza = () => {
                 />
               </div>
               {/* right mid  */}
-              <div className="absolute bottom-[40%]  -right-6 -translate-y-[20%] bg-white p-2 rounded-md shadow-lg z-50">
+              <div className="absolute bottom-[40%]  -right-6 -translate-y-[20%] bg-white p-2 rounded-md shadow-lg z-20">
                 <Image
                   src={"/icon/hot-dog.svg"}
                   alt="tomato"
@@ -177,7 +177,7 @@ const CreateOwnPizza = () => {
                 />
               </div>
               {/* mushroom */}
-              <div className="absolute -bottom-6  right-[50%] -translate-x-[50%] bg-white p-2 rounded-md shadow-lg z-50">
+              <div className="absolute -bottom-6  right-[50%] -translate-x-[50%] bg-white p-2 rounded-md shadow-lg z-20">
                 <Image
                   src={"/icon/mushroom.svg"}
                   alt="tomato"
