@@ -1,7 +1,4 @@
-/**
- * TanStack Query mutations for order operations
- * Can be easily connected to real API endpoints
- */
+
 
 import { useMutation, type UseMutationResult } from "@tanstack/react-query"
 import type { Order, CartItem } from "@/lib/types"
@@ -26,13 +23,7 @@ interface CreateOrderInput {
 export function useCreateOrderMutation(): UseMutationResult<Order, Error, CreateOrderInput> {
   return useMutation({
     mutationFn: async (input: CreateOrderInput) => {
-      // Replace with real API call:
-      // const response = await fetch('/api/orders', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(input),
-      // })
-      // return response.json()
+
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -61,14 +52,7 @@ export function useUpdateOrderMutation() {
       orderId: string
       status: Order["status"]
     }) => {
-      // Replace with real API call:
-      // const response = await fetch(`/api/orders/${orderId}`, {
-      //   method: 'PATCH',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ status }),
-      // })
-      // return response.json()
-
+   
       return { orderId, status }
     },
   })
