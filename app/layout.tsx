@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Lobster, Poppins } from "next/font/google";
 import "./globals.css";
 import TanstackProvider from "@/provider/tanstackProvider";
+import { Footer } from "@/components/sheard/footer";
+import Navbar from "@/components/sheard/Navbar";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,7 +23,7 @@ const geistMono = Geist_Mono({
 const lobster = Lobster({
   variable: "--font-lobster",
   subsets: ["latin"],
-  weight:['400']
+  weight: ["400"],
 });
 export const metadata: Metadata = {
   title: "Create seagoville",
@@ -37,7 +40,20 @@ export default function RootLayout({
       <body
         className={`${poppins.variable} ${lobster.variable} ${geistSans.variable} ${geistMono.variable} font-sans  antialiased`}
       >
-        <TanstackProvider>{children}</TanstackProvider>
+        <TanstackProvider>
+          <Navbar />
+          {children}
+          <Toaster
+            position="top-center"
+            richColors
+            closeButton
+            duration={4000}
+            visibleToasts={3}
+            offset={16}
+          />
+
+          <Footer />
+        </TanstackProvider>
       </body>
     </html>
   );

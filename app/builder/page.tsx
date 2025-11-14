@@ -88,6 +88,7 @@ export default function BuilderPage() {
       price: totalPrice,
       quantity: 1,
       customizations: state,
+      time:'50'
     });
 
     // Redirect to cart
