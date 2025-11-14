@@ -4,12 +4,12 @@ import { Button } from "../ui/button";
 
 const Hero = () => {
   return (
-    <section className="relative py-20 md:py-32 bg-[url('/navbar.jpg')] bg-cover bg-center h-screen flex items-center">
+    <section className="relative  bg-[url('/navbar.jpg')] bg-cover  h-screen  flex items-center">
       {/* Optional overlay for better text readability */}
       {/* <div className="absolute inset-0 bg-black/20"></div> */}
 
       <div className="container relative px-4 sm:px-6 lg:px-8 mx-auto ">
-        <div className="max-w-2xl">
+        <div className="max-w-[50%]">
          <p className="text-[#D62828] text-xs  font-medium leading-[150%] mb-3 md:mb-5 bg-[#F2BCBC] border border-[#F2BCBC]  px-4 py-2 rounded-xl  inline-block ">🔥 Delivery & Pickup Available</p>
           <h1 className="text-4xl font-lobster md:text-5xl lg:text-6xl font-bold mb-3  md:mb-5 font-lobster">
             Fresh. Hot. Made to Excite Your Taste Buds!

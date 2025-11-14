@@ -1,5 +1,5 @@
 import React from "react";
-import { PizzaCard } from "../pizza/pizza-card";
+import { PizzaCard } from "../sheard/pizza-card";
 import { FEATURED_PIZZAS } from "@/lib/constants";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -9,7 +9,7 @@ const SingnaturePizza = () => {
   const { addItem } = useCart();
   const handleAddToCart = (pizza: (typeof FEATURED_PIZZAS)[0]) => {
     addItem({
-      id: `${pizza.id}-${Date.now()}`,
+      id: `${pizza.id}`,
       pizzaId: pizza.id,
       name: pizza.name,
       price: pizza.price,

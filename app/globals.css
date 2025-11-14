@@ -117,12 +117,23 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-poppins);
   }
 }
 
-.font-lobster{
+.font-lobster {
   font-family: var(--font-lobster);
+}
+.text-primary {
+  color: #d62828;
+}
+
+.text-secondary {
+  color: #343a40;
+}
+.text-gray{
+  color:#6C757D;
 }
