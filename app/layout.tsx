@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Lobster, Poppins } from "next/font/google";
 import "./globals.css";
 import TanstackProvider from "@/provider/tanstackProvider";
-import { Footer } from "@/components/sheard/footer";
-import Navbar from "@/components/sheard/Navbar";
+import { Footer } from "@/components/shared/footer";
+import Navbar from "@/components/shared/Navbar";
 import { Toaster } from "sonner";
 
 const geistSans = Geist({

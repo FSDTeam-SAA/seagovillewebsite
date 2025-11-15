@@ -1,20 +1,16 @@
-
-
 "use client";
 
-
-import Hero from "@/components/sheard/Hero";
+import Hero from "@/components/shared/Hero";
 import SingnaturePizza from "@/components/signaturepiczza/SingnaturePizza";
 import CreateOwnPizza from "@/components/home/CreateOwnPizza";
 import HotDealsCombos from "@/components/home/HotDealsCombos";
-import FAQ from "@/components/sheard/FAQ";
-import OurClientSay from "@/components/sheard/OurClientSay";
-import Subscribe from "@/components/sheard/Subscribe";
+import FAQ from "@/components/shared/FAQ";
+import OurClientSay from "@/components/shared/OurClientSay";
+import Subscribe from "@/components/shared/Subscribe";
 
 export default function Home() {
   return (
     <div className="">
-      
       <Hero />
       <SingnaturePizza />
       <CreateOwnPizza />
@@ -22,7 +18,6 @@ export default function Home() {
       <OurClientSay />
       <FAQ />
       <Subscribe />
-
     </div>
   );
 }

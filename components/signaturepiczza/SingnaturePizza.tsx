@@ -1,5 +1,5 @@
 import React from "react";
-import { PizzaCard } from "../sheard/pizza-card";
+import { PizzaCard } from "../shared/pizza-card";
 import { FEATURED_PIZZAS } from "@/lib/constants";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -16,7 +16,7 @@ const SingnaturePizza = () => {
       name: pizza.name,
       price: pizza.price,
       quantity: 1,
-      time:'30',
+      time: "30",
     });
   };
 

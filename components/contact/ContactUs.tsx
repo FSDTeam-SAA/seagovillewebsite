@@ -30,10 +30,10 @@ const ContactUs = () => {
   ];
 
   return (
-    <section>
+    <section className="my-10 md:my-20">
       <div className="container mx-auto">
         <header className="mb-8 md:mb-16 flex flex-col justify-center items-center">
-          <p className="text-sm font-medium text-[#D62828] bg-[#FBEAEA] border py-2 px-4 rounded-sm inline-block border-[#F2BCBC] tracking-wider leading-[150%]">
+          <p className="text-sm font-medium text-[#D62828] bg-[#FBEAEA] border py-2 mb-3 px-4 rounded-sm inline-block border-[#F2BCBC] tracking-wider leading-[150%]">
             🧑 Contact Us
           </p>
 
@@ -41,7 +41,7 @@ const ContactUs = () => {
             Contact Information
           </h1>
 
-          <p className="text-xs md:text-sm text-[#6C757D] leading-relaxed font-normal">
+          <p className="text-xs md:text-sm text-[#6C757D] leading-relaxed font-normal text-center w-[80%] md:w-full">
             Discover our delicious selection of handcrafted pizzas, appetizers, and more.
           </p>
         </header>
