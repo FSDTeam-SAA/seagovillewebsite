@@ -410,7 +410,6 @@ export default function BuilderPage() {
         </div>
       </div>
 
-      <Footer />
     </div>
   );
 }
