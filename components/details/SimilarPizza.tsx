@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { PizzaCard } from "../sheard/pizza-card";
+import { PizzaCard } from "../shared/pizza-card";
 import { useCart } from "@/hooks/use-cart";
 import { toast } from "sonner";
 import { FEATURED_PIZZAS } from "@/lib/constants";
@@ -20,7 +20,6 @@ interface PizzaCard {
 
 export const SimilarPizza = () => {
   const { addItem } = useCart();
- 
 
   const handleAddToCart = (pizza: (typeof FEATURED_PIZZAS)[0]) => {
     toast.success("WoW Succesfuly added the pizza in your cart");

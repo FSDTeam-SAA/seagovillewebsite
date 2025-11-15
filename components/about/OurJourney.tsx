@@ -46,7 +46,7 @@ const OurJourney = () => {
           </p>
         </header>
 
-        <div className="relative space-y-16">
+        <div className="relative space-y-16 w-[90%] mx-auto lg:w-full">
           <div className="hidden md:flex absolute left-1/2 top-0 h-full w-[3px]  -translate-x-1/2 bg-red-600"></div>
 
           {journey.map((item, i) => (

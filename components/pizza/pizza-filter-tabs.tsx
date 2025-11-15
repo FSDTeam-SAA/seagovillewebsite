@@ -27,7 +27,7 @@ export function PizzaFilterTabs({ activeCategory, onCategoryChange }: PizzaFilte
           key={category.id}
           onClick={() => onCategoryChange(category.id)}
           variant={activeCategory === category.id ? "default" : "outline"}
-          className={activeCategory === category.id ? "bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer" : " cursor-pointer"}
+          className={activeCategory === category.id ? "bg-[#D62828] hover:bg-[#d62828] text-primary-foreground cursor-pointer" : " cursor-pointer"}
         >
           {category.label}
         </Button>

@@ -50,7 +50,7 @@ const Hero = () => {
               </p>
             </div>
             <div>
-              <p className="text-2xl md:text-4xl font-bold leading-[150%]">15+</p>
+              <p className="text-2xl md:text-4xl font-bold leading-[150%] ">15+</p>
               <p className="text-sm md:text-sm font-normal leading-[150%] text-[#343A40]">Menu Items</p>
             </div>
             <div>

@@ -1,9 +1,5 @@
 "use client"
 
-/**
- * Custom hook for shopping cart management
- * Handles adding, removing, and updating cart items
- */
 
 import { useState, useCallback } from "react"
 import type { CartItem } from "@/lib/types"
@@ -18,7 +14,7 @@ export function useCart() {
       const stored = localStorage.getItem(STORAGE_KEY)
       return stored ? JSON.parse(stored) : []
     } catch (error) {
-      console.error("[v0] Error loading cart from storage:", error)
+      console.error(" Error loading cart from storage:", error)
       return []
     }
   })
@@ -28,7 +24,7 @@ export function useCart() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
     } catch (error) {
-      console.error("[v0] Error saving cart to storage:", error)
+      console.error(" Error saving cart to storage:", error)
     }
   }, [])
 

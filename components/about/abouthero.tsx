@@ -9,15 +9,15 @@ const AboutHero = () => {
           <p className="text-sm font-medium text-[#D62828] bg-[#FBEAEA] border py-2 px-4 rounded-sm  inline-block border-[#F2BCBC]  tracking-wider leading-[150%]">
             🧑 About Us
           </p>
-          <h1 className="text-3xl md:text-4xl  font-bold text-[#343A40] mb-2 font-lobster">
+          <h1 className="text-3xl md:text-4xl  font-bold text-[#343A40] mb-2 font-lobster text-center w-[90%] md:w-full">
             Crafted with Passion, Served with Love
           </h1>
-          <p className="text-xs md:text-sm text-[#6C757D]  leading-relaxed font-normal">
+          <p className="text-xs md:text-sm text-[#6C757D]  leading-relaxed font-normal text-center w-[90%] md:w-full">
             Discover our delicious selection of handcrafted pizzas, appetizers,
             and more
           </p>
         </header>
-        <div>
+        <div className="w-[90%] mx-auto lg:w-full">
           <Image
             src={"/images/about.jpg"}
             alt="about"
