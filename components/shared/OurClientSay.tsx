@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Star } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -10,8 +10,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { Button } from '../ui/button';
+import ReviewMolal from '../home/ReviewMolal';
 
 const OurClientSay = () => {
+  const [open,setOpen]=useState(false)
   const testimonials = [
     {
       id: 1,
@@ -70,11 +73,11 @@ const OurClientSay = () => {
 
   return (
     <section 
-      className="w-full py-16 md:py-24 lg:py-32 bg-cover bg-center bg-no-repeat"
+      className="w-full py-16 md:py-24 lg:py-24 bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: "url('/images/ourclientsay.png')" }}
     >
       {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/20"></div>
+      {/* <div className="absolute inset-0 bg-black/20"></div> */}
       
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         {/* Header Section */}
@@ -137,7 +140,9 @@ const OurClientSay = () => {
             <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-50 border-gray-200" />
           </Carousel>
         </div>
+        <Button onClick={()=> setOpen(true)} className='text-white bg-[#D62828] cursor-pointer hover:bg-[#d62828f6] flex justify-center rounded-sm px-10 py-5 mx-auto mt-10'>Write a Review</Button>
       </div>
+      <ReviewMolal open={open} setOpen={setOpen} />
     </section>
   )
 }

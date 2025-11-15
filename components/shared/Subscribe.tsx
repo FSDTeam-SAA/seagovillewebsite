@@ -10,7 +10,7 @@ const Subscribe = () => {
       style={{ backgroundImage: "url('/images/subscribe.jpg')" }}
     >
       {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/40"></div>
+      {/* <div className="absolute inset-0 bg-black/40"></div> */}
 
       <div className="container mx-auto  px-4 md:px-6 relative z-10 flex justify-end">
         <div className="text-end flex flex-col justify-end items-end" >

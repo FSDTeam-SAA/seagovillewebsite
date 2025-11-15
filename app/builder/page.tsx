@@ -15,7 +15,7 @@ import { StepIndicator } from "@/components/step-indicator";
 import { SelectionGrid } from "@/components/selection-grid";
 import { Button } from "@/components/ui/button";
 import { PizzaBuilderPreview } from "@/components/pizza/pizza-builder-preview";
-import { Footer } from "@/components/sheard/footer";
+import { Footer } from "@/components/shared/footer";
 import { CHEESES, CRUSTS, SAUCES, SIZES, TOPPINGS } from "@/lib/constants";
 
 const STEPS = ["Size", "Crust", "Sauce", "Cheese", "Toppings", "Review"];
@@ -88,7 +88,7 @@ export default function BuilderPage() {
       price: totalPrice,
       quantity: 1,
       customizations: state,
-      time:'50'
+      time: "50",
     });
 
     // Redirect to cart
@@ -409,7 +409,6 @@ export default function BuilderPage() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }

@@ -1,13 +1,16 @@
 "use client";
 import { useCart } from "@/hooks/use-cart";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { ArrowLeft, Clock, ShoppingCart } from "lucide-react";
 import { CartItemCard } from "./cart-item-card";
+import { Input } from "../ui/input";
+import { toast } from "sonner";
 
 const CartItems = () => {
   const { cart, removeItem, updateQuantity, totalPrice, clearCart } = useCart();
+  const [promo,setPromo]=useState('')
 
   if (cart.length === 0) {
     return (
@@ -39,7 +42,16 @@ const CartItems = () => {
       </div>
     );
   }
-  console.log("cart images", cart);
+  
+  const handelprocode=()=>{
+    if('habu'===promo){
+
+      toast.success('nice you got 5 % discuount')
+      setPromo('')
+    }else{
+   toast.error("You Don't have an Promo Code Don't try")
+    }
+  }
   return (
     <section>
       <div className="container mx-auto">
@@ -122,6 +134,11 @@ const CartItems = () => {
                       <span className="text-muted-foreground">Delivery</span>
                       <span>Free</span>
                     </div>
+                  </div>
+                  <div className="flex gap-1 my-5">
+                    <Input onChange={(e)=> setPromo(e.target.value)} type="text" placeholder="If you Have Promo Code please Use" />
+                    <Button onClick={handelprocode} className="text-white bg-[#D62828] cursor-pointer rounded-sm">Apply</Button>
+
                   </div>
 
                   <div className="flex justify-between items-center mb-6">

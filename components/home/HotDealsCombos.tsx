@@ -43,7 +43,7 @@ const HotDealsCombos = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-16">
-          <p className="text-sm font-medium text-[#D62828] bg-transparent border py-2 px-4 rounded-sm  inline-block border-[#F2BCBC]  tracking-wider leading-[150%]">
+          <p className="text-sm font-medium text-[#D62828] bg-transparent border py-2 px-4 rounded-sm  inline-block border-[#F2BCBC]  tracking-wider leading-[150%] mb-3 md:mb-4">
             {" "}
             🎉 Special Offers
           </p>
@@ -64,7 +64,7 @@ const HotDealsCombos = () => {
               className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden"
             >
               {/* Image Container */}
-              <div className="relative h-64 overflow-hidden">
+              <div className="relative w-full  aspect-square overflow-hidden">
                 <Image
                   src="/images/hot-deals.png"
                   alt={deal.title}
@@ -137,8 +137,8 @@ const HotDealsCombos = () => {
 
         {/* CTA Section */}
         <div className="text-center mt-12">
-          <Link href="/deals">
-            <Button size="lg" className="">
+          <Link href="/menu">
+            <Button size="lg" className="bg-transparent text-primary border border-[#D62828] cursor-pointer">
               View All Deals
             </Button>
           </Link>
