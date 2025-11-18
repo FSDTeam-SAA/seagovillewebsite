@@ -15,7 +15,7 @@ import { MapPin, Clock, CreditCard } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import Link from "next/link";
 
-import { Footer } from "@/components/shared/footer";
+
 
 export default function CheckoutPage() {
   const { cart, totalPrice, clearCart } = useCart();
@@ -42,7 +42,7 @@ export default function CheckoutPage() {
             </Link>
           </div>
         </div>
-        <Footer />
+        
       </div>
     );
   }
@@ -119,7 +119,7 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        <Footer />
+  
       </div>
     );
   }
@@ -351,7 +351,7 @@ export default function CheckoutPage() {
         </div>
       </section>
 
-      <Footer />
+    
     </div>
   );
 }
