@@ -19,10 +19,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Star } from "lucide-react";
 import { toast } from "sonner";
+import { createReview } from "@/lib/api";
 
 const formSchema = z.object({
   name: z.string().min(3, "Your name must be at least 3 characters."),
-  message: z.string().min(5, "Message must be at least 5 characters."),
+  comment: z.string().min(5, "Message must be at least 5 characters."),
   rating: z.number().min(1, "Please select at least 1 star."),
 });
 
@@ -39,16 +40,23 @@ const ReviewModal = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      message: "",
+      comment: "",
       rating: 0,
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    toast.success("Successfuly create review");
-    console.log("Form Data:", data);
+const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  try {
+    await createReview(data);
+    toast.success("Successfully created review!");
     setOpen(false);
-  };
+    form.reset();
+  } catch (error) {
+    toast.error("Failed to submit review");
+    console.error(error);
+  }
+};
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -99,11 +107,11 @@ const ReviewModal = ({
           <div>
             <Textarea
               placeholder="Write your message..."
-              {...form.register("message")}
+              {...form.register("comment")}
             />
-            {form.formState.errors.message && (
+            {form.formState.errors.comment && (
               <p className="text-red-500 text-sm mt-1">
-                {form.formState.errors.message.message}
+                {form.formState.errors.comment.message}
               </p>
             )}
           </div>

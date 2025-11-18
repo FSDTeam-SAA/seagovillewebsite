@@ -1,11 +1,5 @@
-/**
- * Pizza preview component in the builder
- * Shows selected customizations on the pizza
- */
-
-import { PizzaBuilderState } from "@/lib/types"
-
-
+"use client"
+import type { PizzaBuilderState } from "@/lib/types"
 
 interface PizzaBuilderPreviewProps {
   state: PizzaBuilderState
@@ -13,13 +7,14 @@ interface PizzaBuilderPreviewProps {
 
 export function PizzaBuilderPreview({ state }: PizzaBuilderPreviewProps) {
   const basePrice = 12.99
-  const sizeModifier = state.size?.priceModifier || 0
-  const crustModifier = state.crust?.priceModifier || 0
-  const sauceModifier = state.sauce?.priceModifier || 0
-  const cheeseModifier = state.cheese?.priceModifier || 0
+  const sizePrice = state.size?.price || 0
+  const crustPrice = state.crust?.price || 0
+  const saucePrice = state.sauce?.price || 0
+  const cheesePrice = state.cheese?.price || 0
   const toppingsPrice = state.toppings.reduce((sum, t) => sum + t.price, 0)
 
-  const totalPrice = basePrice + sizeModifier + crustModifier + sauceModifier + cheeseModifier + toppingsPrice
+  const totalPrice =
+    basePrice + sizePrice + crustPrice + saucePrice + cheesePrice + toppingsPrice
 
   return (
     <div className="bg-card rounded-lg p-6 border border-border">
@@ -75,7 +70,9 @@ export function PizzaBuilderPreview({ state }: PizzaBuilderPreviewProps) {
       {/* Price */}
       <div className="flex justify-between items-center">
         <span className="font-semibold">Total:</span>
-        <span className="text-2xl font-bold text-primary">${totalPrice.toFixed(2)}</span>
+        <span className="text-2xl font-bold text-[#D62828]">
+          ${totalPrice.toFixed(2)}
+        </span>
       </div>
     </div>
   )
