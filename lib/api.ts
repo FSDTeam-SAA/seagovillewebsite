@@ -2,6 +2,7 @@
 import { CartItem, MenuItem } from "@/lib/types";
 import { toast } from "sonner";
 import { CustomizationItem } from "./cusomizetype";
+import { da } from "zod/v4/locales";
 const api=process.env.NEXT_PUBLIC_API_URL
 
 export async function getFacilities(category: string, page: number) {
@@ -93,7 +94,7 @@ export async function createReview(data: {
 
 
 // Get cart items
-export const getCartItems = async (): Promise<CartItem[]> => {
+export const getCartItems = async () => {
   try {
     const res = await fetch(`${api}/add-cart/get-cart`, {
       method: "GET",
@@ -308,3 +309,25 @@ export const fetchToppingsCategoryFilter = async (type:string) => {
     return [];
   }
 };
+
+
+
+//subscription
+
+export async function subscription(email:string) {
+  try{
+    const res=await fetch(`${api}/subscription/new-subscription`,{
+      method:'POST',
+      headers:{
+        "Content-Type":"application/json",
+      },
+      body:JSON.stringify({email})
+    })
+    const data= res.json()
+    return data;
+  }catch(error){
+    if(error instanceof Error ){
+      throw new Error(`${error}`)
+    }
+  }
+}

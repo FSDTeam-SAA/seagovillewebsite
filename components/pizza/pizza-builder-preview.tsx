@@ -1,5 +1,5 @@
 "use client"
-import type { PizzaBuilderState } from "@/lib/types"
+import type { PizzaBuilderState } from "@/lib/PizzaBuilderState"
 
 interface PizzaBuilderPreviewProps {
   state: PizzaBuilderState

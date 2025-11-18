@@ -68,8 +68,7 @@ export interface PizzaBuilderState {
 export interface CartItem {
   [x: string]: unknown;
   name: ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  time: any;
+ 
   price: number;
   _id: string;
   pizzaId?: string;

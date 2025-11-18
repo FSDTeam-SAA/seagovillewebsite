@@ -1,9 +1,22 @@
-import React from "react";
+'use client'
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { subscription } from "@/lib/api";
 
 const Subscribe = () => {
+  const [email, setEmail] = useState('')
+  const handelMutation = useMutation({
+    mutationKey: ['subscription'],
+    mutationFn: (email: string) => subscription( email )
+  })
+
+  const handelSubScription = () => {
+    handelMutation.mutate(email)
+  }
+
   return (
     <section
       className="w-full py-16 md:py-24 lg:py-32 bg-cover bg-center bg-no-repeat "
@@ -33,12 +46,15 @@ const Subscribe = () => {
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <Input
                   type="email"
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
                   className="pl-10 h-12 bg-white/90 border-white/20 focus:bg-white transition-all duration-300"
                 />
               </div>
               <Button
+                onClick={() => handelSubScription()}
                 size="lg"
+
                 className="h-12 px-8 bg-primary hover:bg-primary/90 text-white font-semibold transition-all duration-300 hover:scale-105"
               >
                 Subscribe Now

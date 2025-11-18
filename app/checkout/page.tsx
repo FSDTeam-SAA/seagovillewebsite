@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/purity */
 /**
  * Checkout page - Delivery details and order confirmation
@@ -12,13 +13,15 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { MapPin, Clock, CreditCard } from "lucide-react";
-import { useCart } from "@/hooks/use-cart";
+
 import Link from "next/link";
 
-import { Footer } from "@/components/shared/footer";
+
+import { useQuery } from "@tanstack/react-query";
+import { getCartItems } from "@/lib/api";
 
 export default function CheckoutPage() {
-  const { cart, totalPrice, clearCart } = useCart();
+  
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [formData, setFormData] = useState({
@@ -30,7 +33,11 @@ export default function CheckoutPage() {
     zipCode: "",
     instructions: "",
   });
-
+ const {data}=useQuery({
+  queryKey:['cart'],
+  queryFn:()=>getCartItems()
+ })
+ const cart= data || [] ;
   if (cart.length === 0) {
     return (
       <div className="flex flex-col min-h-screen bg-background">
@@ -42,7 +49,7 @@ export default function CheckoutPage() {
             </Link>
           </div>
         </div>
-        <Footer />
+
       </div>
     );
   }
@@ -63,7 +70,7 @@ export default function CheckoutPage() {
 
     setOrderPlaced(true);
     setLoading(false);
-    clearCart();
+    // clearCart();
   };
 
   if (orderPlaced) {
@@ -119,13 +126,13 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        <Footer />
+  
       </div>
     );
   }
 
-  const tax = totalPrice * 0.08;
-  const total = totalPrice + tax;
+  const tax =  0.08; // fixed korte hobe
+  const total = 55270; //eataw fixed korte hobe
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -312,7 +319,7 @@ export default function CheckoutPage() {
                 <h3 className="text-xl font-bold mb-6">Order Summary</h3>
 
                 <div className="space-y-3 mb-6 pb-6 border-b border-border max-h-64 overflow-y-auto">
-                  {cart.map((item) => (
+                  {cart.map((item:any) => (
                     <div key={String(item.id)} className="flex justify-between text-sm">
                       <span className="text-muted-foreground">
                         {item.name} x{item.quantity}
@@ -327,7 +334,7 @@ export default function CheckoutPage() {
                 <div className="space-y-3 mb-6 pb-6 border-b border-border">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>${total.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Tax (8%)</span>
@@ -351,7 +358,6 @@ export default function CheckoutPage() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

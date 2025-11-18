@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
-import type { PizzaBuilderState, Size, Crust, Sauce, Cheese, Topping } from "@/lib/types"
+import type { Size, Crust, Sauce, Cheese, Topping } from "@/lib/types"
+import type { PizzaBuilderState } from "@/lib/PizzaBuilderState"
 
 export function usePizzaBuilder() {
   const [state, setState] = useState<PizzaBuilderState>({
