@@ -3,46 +3,84 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Star, ShoppingCart } from "lucide-react";
+import { toast } from "sonner";
+import { addToCart } from "@/lib/api";
+import { MenuResponse } from "@/lib/detailstype";
 
 interface SizeOption {
   size: string;
   price: number;
   description: string;
+  key: "small" | "medium" | "large";
 }
 
-export const DetailsTop = () => {
-  const [selectedSize, setSelectedSize] = useState<string>("small");
+export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
+  const singlePizza = pizza?.data;
+  const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("small");
+  console.log('imagess',singlePizza.images)
+  const [mainImage, setMainImage] = useState(singlePizza?.images[0]?.url || "/detail2.jpg");
 
+  // Use actual pizza data for size options
   const sizeOptions: SizeOption[] = [
-    { size: "Small Size", price: 12, description: "Light and crunchy" },
-    { size: "Mid Size", price: 123, description: "Light and crunchy" },
-    { size: "Large Size", price: 1234, description: "Light and crunchy" },
+    { 
+      size: "Small Size", 
+      price: singlePizza.price.small, 
+      description: "Perfect for one person",
+      key: "small"
+    },
+    { 
+      size: "Medium Size", 
+      price: singlePizza.price.medium, 
+      description: "Great for sharing",
+      key: "medium"
+    },
+    { 
+      size: "Large Size", 
+      price: singlePizza.price.large, 
+      description: "Family size feast",
+      key: "large"
+    },
   ];
 
-  const ingredients = [
-    "Lorem ipsum ingredients",
-    "Lorem ipsum ingredients",
-    "Lorem ipsum ingredients",
-    "Lorem ipsum ingredients",
-    "Lorem ipsum ingredients",
-    "Lorem ipsum ingredients",
-  ];
+  // Use actual ingredients if available, otherwise fallback
+  const ingredients = singlePizza.ingredients && singlePizza.ingredients.length > 0 
+    ? singlePizza.ingredients 
+    : [
+        "Fresh mozzarella cheese",
+        "Premium tomato sauce",
+        "Fresh herbs and spices",
+        "Quality selected toppings",
+        "Hand-tossed dough",
+        "100% natural ingredients",
+      ];
 
-  const selectedSizeData =
-    sizeOptions[selectedSize === "small" ? 0 : selectedSize === "mid" ? 1 : 2];
+  // Use all available images or fallback to multiple copies of the main image
+  const images = singlePizza.images && singlePizza.images.length > 0 
+    ? singlePizza.images.map(img => img.url)
+    : [singlePizza.images[0]?.url || "/placeholder.svg"];
 
-  const images = [
-    "/images/hot-deals.png",
-    "/detail2.jpg",
-    "/images/hot-deals.png",
-    "/detail2.jpg",
-    "/images/hot-deals.png",
-    "/detail2.jpg",
-   "/images/hot-deals.png",
-  ];
+  const selectedSizeData = sizeOptions.find(option => option.key === selectedSize) || sizeOptions[0];
 
-  // State for the main image
-  const [mainImage, setMainImage] = useState(images[0]);
+  const handleAddToCart = async () => {
+    const price = singlePizza.price[selectedSize];
+
+    if (!price) {
+      toast.error("Selected size is not available for this pizza");
+      return;
+    }
+
+    const cartItem = await addToCart(singlePizza._id, selectedSize);
+    
+    if (cartItem) {
+      toast.success("WoW! Successfully added the pizza to your cart");
+    }
+  };
+
+  const handleOrderNow = () => {
+    handleAddToCart();
+    // You can add navigation to cart or checkout here
+  };
+
   return (
     <section className="py-12 bg-gradient-to-b from-white to-orange-50">
       <div className="container mx-auto px-4 md:px-6">
@@ -53,31 +91,34 @@ export const DetailsTop = () => {
             <div className="relative bg-white rounded-lg overflow-hidden shadow-lg w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
               <Image
                 src={mainImage}
-                alt="Selected Pizza"
+                alt={singlePizza.name}
                 fill
                 className="object-cover"
+                priority
               />
             </div>
 
-            {/* Thumbnails */}
-            <div className="flex gap-3 overflow-x-auto py-2">
-              {images.map((img, i) => (
-                <button
-                  key={i}
-                  className={`relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-colors ${
-                    mainImage === img ? "border-red-500" : "border-transparent"
-                  }`}
-                  onClick={() => setMainImage(img)}
-                >
-                  <Image
-                    src={img}
-                    alt={`Pizza view ${i + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </button>
-              ))}
-            </div>
+            {/* Thumbnails - Only show if multiple images available */}
+            {images.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto py-2">
+                {images.map((img, i) => (
+                  <button
+                    key={i}
+                    className={`relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-colors ${
+                      mainImage === img ? "border-red-500" : "border-transparent"
+                    }`}
+                    onClick={() => setMainImage(img)}
+                  >
+                    <Image
+                      src={img}
+                      alt={`${singlePizza.name} view ${i + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right: Details */}
@@ -85,7 +126,7 @@ export const DetailsTop = () => {
             {/* Title & Rating */}
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-                Classic Pepperoni
+                {singlePizza.name}
               </h1>
               <div className="flex items-center gap-2">
                 <div className="flex gap-1">
@@ -96,8 +137,20 @@ export const DetailsTop = () => {
                     />
                   ))}
                 </div>
-                <span className="text-gray-600 ml-2">5.00 (123 review)</span>
+                <span className="text-gray-600 ml-2">
+                  5.00 ({singlePizza.totalSold || 0} sold)
+                </span>
               </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Description
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                {singlePizza.description}
+              </p>
             </div>
 
             {/* Ingredients */}
@@ -105,12 +158,11 @@ export const DetailsTop = () => {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
                 Ingredients
               </h3>
-              <ul className="grid grid-cols-2 gap-2">
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {ingredients.map((ingredient, i) => (
                   <li key={i} className="flex items-center gap-2 text-gray-700">
                     <span className="text-red-500">•</span>
                     {ingredient}
-                    <span className="text-gray-500 ml-auto">• 52g</span>
                   </li>
                 ))}
               </ul>
@@ -121,18 +173,13 @@ export const DetailsTop = () => {
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Choose Your Size
               </h3>
-              <div className="grid grid-cols-3 gap-3">
-                {sizeOptions.map((option, idx) => (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {sizeOptions.map((option) => (
                   <button
-                    key={idx}
-                    onClick={() =>
-                      setSelectedSize(
-                        idx === 0 ? "small" : idx === 1 ? "mid" : "large"
-                      )
-                    }
-                    className={`p-3 rounded-lg border-2 text-center transition-all ${
-                      selectedSize ===
-                      (idx === 0 ? "small" : idx === 1 ? "mid" : "large")
+                    key={option.key}
+                    onClick={() => setSelectedSize(option.key)}
+                    className={`p-3 rounded-lg cursor-pointer border-2 text-center transition-all ${
+                      selectedSize === option.key
                         ? "border-red-500 bg-red-50"
                         : "border-gray-200 bg-white hover:border-gray-300"
                     }`}
@@ -149,40 +196,61 @@ export const DetailsTop = () => {
               </div>
             </div>
 
-            {/* Order Button */}
-            <button className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors">
-              <ShoppingCart className="w-5 h-5" />
-              Order Now
-            </button>
+            {/* Availability */}
+            <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+              singlePizza.isAvailable 
+                ? 'bg-green-100 text-green-800' 
+                : 'bg-red-100 text-red-800'
+            }`}>
+              {singlePizza.isAvailable ? 'In Stock' : 'Out of Stock'}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button 
+                onClick={handleAddToCart}
+                disabled={!singlePizza.isAvailable}
+                className="flex-1 cursor-pointer bg-white hover:bg-gray-50 text-red-600 border border-red-600 font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                Add to Cart
+              </button>
+              <button 
+                onClick={handleOrderNow}
+                disabled={!singlePizza.isAvailable}
+                className="flex-1 cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Order Now
+              </button>
+            </div>
+
+            {/* Additional Info */}
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-semibold">Category:</span>
+                  <span className="ml-2 text-gray-600 capitalize">{singlePizza.category}</span>
+                </div>
+                <div>
+                  <span className="font-semibold">Total Sold:</span>
+                  <span className="ml-2 text-gray-600">{singlePizza.totalSold || 0}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Description */}
+        {/* Detailed Description */}
         <div className="mt-16 border-t pt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Description</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Detailed Description</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
+            {singlePizza.description}
           </p>
           <ul className="space-y-2 text-gray-700">
-            <li>
-              • Lorem ipsum is simply dummy text of the printing and typesetting
-              industry
-            </li>
-            <li>
-              • Lorem ipsum is simply dummy text of the printing and typesetting
-              industry
-            </li>
-            <li>
-              • Lorem ipsum is simply dummy text of the printing and typesetting
-              industry
-            </li>
-            <li>
-              • Lorem ipsum is simply dummy text of the printing and typesetting
-              industry
-            </li>
+            <li>• Made with fresh, high-quality ingredients</li>
+            <li>• Perfectly baked to achieve the ideal crust</li>
+            <li>• Generous toppings for maximum flavor</li>
+            <li>• Prepared fresh when you order</li>
           </ul>
         </div>
       </div>

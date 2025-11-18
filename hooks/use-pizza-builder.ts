@@ -1,36 +1,29 @@
 "use client"
-
-/**
- * Custom hook for managing pizza builder state
- * Handles size, crust, sauce, cheese, and toppings selection
- */
-
 import { useState } from "react"
 import type { PizzaBuilderState, Size, Crust, Sauce, Cheese, Topping } from "@/lib/types"
-import { SIZES } from "@/lib/constants"
 
 export function usePizzaBuilder() {
   const [state, setState] = useState<PizzaBuilderState>({
-    size: SIZES[2], // Default to Large
+    size: null,
     crust: null,
     sauce: null,
     cheese: null,
     toppings: [],
   })
 
-  const setSize = (size: Size) => {
+  const setSize = (size: Size | null) => {
     setState((prev) => ({ ...prev, size }))
   }
 
-  const setCrust = (crust: Crust) => {
+  const setCrust = (crust: Crust | null) => {
     setState((prev) => ({ ...prev, crust }))
   }
 
-  const setSauce = (sauce: Sauce) => {
+  const setSauce = (sauce: Sauce | null) => {
     setState((prev) => ({ ...prev, sauce }))
   }
 
-  const setCheese = (cheese: Cheese) => {
+  const setCheese = (cheese: Cheese | null) => {
     setState((prev) => ({ ...prev, cheese }))
   }
 
@@ -44,13 +37,13 @@ export function usePizzaBuilder() {
   const removeTopping = (toppingId: string) => {
     setState((prev) => ({
       ...prev,
-      toppings: prev.toppings.filter((t) => t.id !== toppingId),
+      toppings: prev.toppings.filter((t) => t._id !== toppingId),
     }))
   }
 
   const reset = () => {
     setState({
-      size: SIZES[2],
+      size: null,
       crust: null,
       sauce: null,
       cheese: null,

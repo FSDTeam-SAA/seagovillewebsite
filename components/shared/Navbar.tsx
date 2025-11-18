@@ -3,14 +3,23 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Menu, Search, ShoppingCart } from "lucide-react";
-import { useCart } from "@/hooks/use-cart";
+
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useAppSelector } from "@/lib/store/hooks";
+import SearchButton from "./SearchButton";
+import { useQuery } from "@tanstack/react-query";
+import { getCartItems } from "@/lib/api";
 
 const Navbar = () => {
-  const { totalItems } = useCart();
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchinput, setSearchInput] = useState(false);
   const pathname = usePathname();
+  const {data:cart}=useQuery({
+    queryKey:['cart'],
+    queryFn:()=>getCartItems()
+  })
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -19,6 +28,11 @@ const Navbar = () => {
     { name: "About Us", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];
+  const totalItems = cart?.length || 0;
+ console.log('cart data in navbar',totalItems ,'and also dat',cart)
+  const handelSearch = () => {
+    setSearchInput(!searchinput);
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-[#0000003b] backdrop-blur-3xl py-5 text-white">
@@ -36,7 +50,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -57,19 +71,32 @@ const Navbar = () => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hidden sm:inline-flex"
-            >
-              <Search className="w-5 h-5" />
-            </Button>
+            <div className="relative flex gap-1.5 items-center">
+              {searchinput && (
+                <div className=" ">
+                  <SearchButton />
+                </div>
+              )}
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handelSearch}
+                className="inline-flex"
+              >
+                <Search className="w-5 h-5 cursor-pointer" />
+              </Button>
+            </div>
 
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className="w-5 h-5" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative cursor-pointer"
+              >
+                <ShoppingCart className="w-5 h-5 md:w-8 md:h-8 " />
                 {totalItems > 0 && (
-                  <span className="absolute top-1 right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {totalItems}
                   </span>
                 )}
@@ -81,7 +108,7 @@ const Navbar = () => {
             </Button>
 
             <button
-              className="md:hidden"
+              className="lg:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               <Menu className="w-5 h-5" />
@@ -91,7 +118,7 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="md:hidden pb-4 space-y-2 border-t border-border">
+          <nav className="lg:hidden pb-4 space-y-2 border-t border-border">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -112,7 +139,7 @@ const Navbar = () => {
         )}
       </div>
     </header>
-  ); 
+  );
 };
 
 export default Navbar;

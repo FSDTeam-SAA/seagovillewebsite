@@ -23,7 +23,7 @@ export function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardP
       <div>
         <Image src={'/images/default.jpg'} alt="defauld image" width={80} height={80} className=" rounded-2xl w-full aspect-square object-cover" />
       </div>
-      <div className="flex-1">
+      {/* <div className="flex-1">
         <h3 className="font-semibold mb-1">{item.name}</h3>
         <p className="text-sm text-muted-foreground mb-3">${item.price.toFixed(2)} each</p>
 
@@ -56,10 +56,10 @@ export function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardP
             <Plus className="w-3 h-3" />
           </Button>
         </div>
-      </div>
+      </div> */}
 
       <div className="flex flex-col items-end justify-between">
-        <p className="text-lg font-bold text-primary">${(item.price * item.quantity).toFixed(2)}</p>
+        {/* <p className="text-lg font-bold text-primary">${(item.price * item.quantity).toFixed(2)}</p> */}
         <Button size="sm" variant="ghost" onClick={onRemove} className="text-destructive hover:bg-destructive/10">
           <Trash2 className="w-4 h-4" />
         </Button>

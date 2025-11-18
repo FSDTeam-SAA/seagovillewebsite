@@ -28,48 +28,48 @@ export function useCart() {
     }
   }, [])
 
-  const addItem = useCallback(
-    (item: CartItem) => {
-      setCart((prev) => {
-        const updated = [...prev]
-        const existingIndex = updated.findIndex(
-          (i) => i.id === item.id && JSON.stringify(i.customizations) === JSON.stringify(item.customizations),
-        )
+  // const addItem = useCallback(
+  //   (item: CartItem) => {
+  //     setCart((prev) => {
+  //       const updated = [...prev]
+  //       const existingIndex = updated.findIndex(
+  //         (i) => i.id === item.id && JSON.stringify(i.customizations) === JSON.stringify(item.customizations),
+  //       )
 
-        if (existingIndex >= 0) {
-          updated[existingIndex].quantity += item.quantity
-        } else {
-          updated.push(item)
-        }
+  //       if (existingIndex >= 0) {
+  //         updated[existingIndex].quantity += item.quantity
+  //       } else {
+  //         updated.push(item)
+  //       }
 
-        saveCart(updated)
-        return updated
-      })
-    },
-    [saveCart],
-  )
+  //       saveCart(updated)
+  //       return updated
+  //     })
+  //   },
+  //   [saveCart],
+  // )
 
-  const removeItem = useCallback(
-    (itemId: string) => {
-      setCart((prev) => {
-        const updated = prev.filter((item) => item.id !== itemId)
-        saveCart(updated)
-        return updated
-      })
-    },
-    [saveCart],
-  )
+  // const removeItem = useCallback(
+  //   (itemId: number) => {
+  //     setCart((prev) => {
+  //       const updated = prev.filter((item) => item._id !== itemId)
+  //       saveCart(updated)
+  //       return updated
+  //     })
+  //   },
+  //   [saveCart],
+  // )
 
-  const updateQuantity = useCallback(
-    (itemId: string, quantity: number) => {
-      setCart((prev) => {
-        const updated = prev.map((item) => (item.id === itemId ? { ...item, quantity: Math.max(1, quantity) } : item))
-        saveCart(updated)
-        return updated
-      })
-    },
-    [saveCart],
-  )
+  // const updateQuantity = useCallback(
+  //   (itemId: number, quantity: number) => {
+  //     setCart((prev) => {
+  //       const updated = prev.map((item) => (item.id === itemId ? { ...item, quantity: Math.max(1, quantity) } : item))
+  //       saveCart(updated)
+  //       return updated
+  //     })
+  //   },
+  //   [saveCart],
+  // )
 
   const clearCart = useCallback(() => {
     saveCart([])
@@ -80,9 +80,9 @@ export function useCart() {
 
   return {
     cart,
-    addItem,
-    removeItem,
-    updateQuantity,
+
+
+   
     clearCart,
     totalPrice,
     totalItems,

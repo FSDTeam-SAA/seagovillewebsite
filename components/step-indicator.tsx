@@ -1,7 +1,3 @@
-/**
- * Multi-step progress indicator for pizza builder
- */
-
 interface StepIndicatorProps {
   steps: string[]
   currentStep: number
@@ -20,8 +16,8 @@ export function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
               className={`
                 w-10 h-10 rounded-full flex items-center justify-center font-bold
                 transition-all
-                ${isActive ? "bg-[#D62828] text-primary-foreground ring-4 ring-primary/30" : ""}
-                ${isCompleted ? "bg-[#D62828] text-primary-foreground" : ""}
+                ${isActive ? "bg-[#D62828] text-white ring-4 ring-[#D62828]/30" : ""}
+                ${isCompleted ? "bg-[#D62828] text-white" : ""}
                 ${!isActive && !isCompleted ? "bg-border text-muted-foreground" : ""}
               `}
             >
@@ -32,7 +28,7 @@ export function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
               <div
                 className={`
                   h-1 w-8 md:w-12 mx-2 transition-all
-                  ${isCompleted ? "bg-primary" : "bg-border"}
+                  ${isCompleted ? "bg-[#D62828]" : "bg-border"}
                 `}
               />
             )}
