@@ -15,16 +15,27 @@ export interface Pizza {
   category: "classic" | "specialty" | "veggie" | "meat";
 }
 
-export interface Size {
+export interface BaseItem {
+  _id: string;
+  name: string;
+  description?: string;
+  isAvailable?: boolean;
+  price: number;
+}
+
+export interface Size extends BaseItem {
+  _id: string;
   price: number;
   id: string;
   name: string;
   inches: number;
   slices: number;
   priceModifier: number;
+  isAvailable?: boolean;
 }
 
-export interface Crust {
+export interface Crust extends BaseItem {
+  _id: string;
   price: number;
   id: string;
   name: string;
@@ -32,7 +43,8 @@ export interface Crust {
   priceModifier: number;
 }
 
-export interface Sauce {
+export interface Sauce extends BaseItem {
+  _id: string;
   price: number;
   id: string;
   name: string;
@@ -40,7 +52,8 @@ export interface Sauce {
   priceModifier: number;
 }
 
-export interface Cheese {
+export interface Cheese extends BaseItem {
+  _id: string;
   price: number;
   id: string;
   name: string;
@@ -48,13 +61,14 @@ export interface Cheese {
   priceModifier: number;
 }
 
-export interface Topping {
+export interface Topping extends BaseItem {
   _id: string;
 
   name: string;
   category: "meat" | "vegetable" | "extra";
   price: number;
   image?: string;
+  priceModifier?: number;
 }
 
 export interface PizzaBuilderState {
@@ -68,8 +82,7 @@ export interface PizzaBuilderState {
 export interface CartItem {
   [x: string]: unknown;
   name: ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  time: any;
+
   price: number;
   _id: string;
   pizzaId?: string;
@@ -155,13 +168,4 @@ export interface Product {
   isAvailable: boolean;
 }
 
-
-
-
-
-
-
-
-
 ///
-

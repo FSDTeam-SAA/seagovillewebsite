@@ -4,17 +4,7 @@ export interface ItemImage {
   url: string;
 }
 
-// export interface CustomizationItem {
-//   _id: string;
-//   name: string;
-//   price: number;
-//   category: string;
-//   isAvailable: boolean;
-//   description: string;
-//   image: ItemImage;
-//   createdAt: string;
-//   updatedAt: string;
-// }
+
 
 export interface PizzaBuilderState {
   size: CustomizationItem | null;
@@ -50,6 +40,7 @@ export interface CustomizationItem {
   image?: ItemImage;
   createdAt?: string;
   updatedAt?: string;
+  
   
 }
 
