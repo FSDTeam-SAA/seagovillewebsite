@@ -6,6 +6,7 @@ import { Footer } from "@/components/shared/footer";
 import Navbar from "@/components/shared/Navbar";
 import { Toaster } from "sonner";
 import ReduxProvider from "./providers/redux-provider";
+import { CartProvider } from "@/context/cartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,20 +43,22 @@ export default function RootLayout({
         className={`${poppins.variable} ${lobster.variable} ${geistSans.variable} ${geistMono.variable} font-sans  antialiased`}
       >
         <TanstackProvider>
-          <ReduxProvider>
-            <Navbar />
-            {children}
-            <Toaster
-              position="top-center"
-              richColors
-              closeButton
-              duration={4000}
-              visibleToasts={3}
-              offset={16}
-            />
+          <CartProvider>
+            <ReduxProvider>
+              <Navbar />
+              {children}
+              <Toaster
+                position="top-center"
+                richColors
+                closeButton
+                duration={4000}
+                visibleToasts={3}
+                offset={16}
+              />
 
-            <Footer />
-          </ReduxProvider>
+              <Footer />
+            </ReduxProvider>
+          </CartProvider>
         </TanstackProvider>
       </body>
     </html>

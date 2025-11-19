@@ -21,53 +21,52 @@ import {
 } from "@/components/ui/form";
 
 import { Watch } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { createContact } from "@/lib/api";
 
-// 📌 Validation Schema
+// In your form schema
 const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
   phone: z
     .string()
     .min(10, "Phone must be at least 10 digits")
-    .max(15, "Phone number is too long"),
+    .max(25, "Phone number is too long"),
   message: z.string().min(1, "Message is required"),
 });
-
 const ContactMessage = () => {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
       message: "",
     },
   });
 
+  const contactMutation = useMutation({
+    mutationKey: ['contactmutation'],
+    mutationFn: createContact, 
+    onSuccess: (data) => {
+      toast.success(`${data.message}`);
+      setLoading(false);
+      form.reset(); 
+    },
+    onError: (error: Error) => {
+      toast.error(`${error.message}`);
+      setLoading(false);
+    }
+  });
+
   // 📌 Submit
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!response.ok) throw new Error("Network Error");
-
-      form.reset();
-      toast.success("Your message has been sent successfully!");
-    } catch (error) {
-      toast.error("Failed to send message.");
-    } finally {
-      setLoading(false);
-    }
+    contactMutation.mutate(values);
   }
 
   return (
@@ -92,22 +91,47 @@ const ContactMessage = () => {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 
                 {/* Name */}
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input className="py-3 rounded-md" placeholder="Your Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            className="py-3 rounded-md" 
+                            placeholder="Your First Name" 
+                            {...field} 
+                            disabled={loading}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField 
+                    control={form.control}
+                    name='lastName'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            className="py-3 rounded-md" 
+                            placeholder="Your Last Name" 
+                            {...field} 
+                            disabled={loading}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 {/* Email + Phone */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="email"
@@ -115,7 +139,12 @@ const ContactMessage = () => {
                       <FormItem>
                         <FormLabel>Email Address</FormLabel>
                         <FormControl>
-                          <Input className="py-3 rounded-md" placeholder="hello@example.com" {...field} />
+                          <Input 
+                            className="py-3 rounded-md" 
+                            placeholder="hello@example.com" 
+                            {...field} 
+                            disabled={loading}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -129,7 +158,12 @@ const ContactMessage = () => {
                       <FormItem>
                         <FormLabel>Phone Number</FormLabel>
                         <FormControl>
-                          <Input className="py-3 rounded-md" placeholder="+1234567890" {...field} />
+                          <Input 
+                            className="py-3 rounded-md" 
+                            placeholder="+1234567890" 
+                            {...field} 
+                            disabled={loading}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -145,7 +179,12 @@ const ContactMessage = () => {
                     <FormItem>
                       <FormLabel>Message</FormLabel>
                       <FormControl>
-                        <Textarea className="h-[150px] rounded-md" placeholder="Write your message here..." {...field} />
+                        <Textarea 
+                          className="h-[150px] rounded-md" 
+                          placeholder="Write your message here..." 
+                          {...field} 
+                          disabled={loading}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -157,7 +196,7 @@ const ContactMessage = () => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="border border-yellow-500 text-white px-6 py-3 rounded-md font-semibold w-full sm:w-auto cursor-pointer transition-all duration-300 bg-[#D62828] hover:bg-yellow-500"
+                    className="border border-yellow-500 cursor-pointer text-white px-6 py-3 rounded-md font-semibold w-full sm:w-auto cursor-pointer transition-all duration-300 bg-[#D62828] hover:bg-yellow-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
                     {loading ? "Sending..." : "Send Message"}
                   </button>

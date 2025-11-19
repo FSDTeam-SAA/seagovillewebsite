@@ -8,36 +8,115 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { MapPin, Clock, CreditCard } from "lucide-react";
+import { MapPin, Clock } from "lucide-react";
 
 import Link from "next/link";
 
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getCartItems, newOrder, payment } from "@/lib/api";
+import { useCart } from "@/context/cartContext";
+import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
-import { useQuery } from "@tanstack/react-query";
-import { getCartItems } from "@/lib/api";
+interface DeliveryDetails {
+  fullName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  zipCode: string;
+  note: string;
+}
+
+interface OrderItem {
+  cartId: string;
+  quantity: number;
+  totalPrice: number;
+}
 
 export default function CheckoutPage() {
-  
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [formData, setFormData] = useState({
+  const [orderId, setOrderId] = useState<string>('');
+  const searchParams = useSearchParams();
+  const [promoCode, setPromoCode] = useState('');
+  const [paymentData,setPyementData]=useState({})
+  const [formData, setFormData] = useState<DeliveryDetails>({
     fullName: "",
     email: "",
     phone: "",
     address: "",
     city: "",
     zipCode: "",
-    instructions: "",
+    note: "",
   });
- const {data}=useQuery({
-  queryKey:['cart'],
-  queryFn:()=>getCartItems()
- })
- const cart= data || [] ;
+
+  useEffect(() => {
+    const couponCode = searchParams.get('couponCode');
+    if (couponCode) {
+      setPromoCode(couponCode);
+    }
+  }, [searchParams]);
+
+  const { data: cart = [] } = useQuery({
+    queryKey: ['cart'],
+    queryFn: () => getCartItems()
+  });
+
+  const { orderData } = useCart();
+
+  // Payment mutation
+  const paymentMutation = useMutation({
+    mutationFn: payment,
+    onSuccess: (data) => {
+      setLoading(false);
+      toast.success(`${data.message}`);
+      setPyementData({
+        clientSecret: data?.data?.clientSecret,
+        paymentId: data?.data?.paymentId,
+      })
+      setOrderPlaced(true);
+    },
+    onError: (error: Error) => {
+      setLoading(false);
+      toast.error(error.message || "Payment failed");
+    }
+  });
+
+  console.log('payment data',paymentData)
+
+  // Order mutation
+  const ordersMutation = useMutation({
+    mutationFn: newOrder,
+    onSuccess: (data) => {
+      console.log('Order created successfully:', data);
+      
+      // Extract order ID from response
+      const createdOrderId = data?.data?._id || data?.data?.id;
+      
+      if (createdOrderId) {
+        setOrderId(createdOrderId);
+        
+        // Process payment after order is created
+        paymentMutation.mutate(createdOrderId);
+      } else {
+        setLoading(false);
+        toast.error("Order created but no order ID received");
+      }
+    },
+    onError: (error: Error) => {
+      setLoading(false);
+      toast.error(error.message || "Failed to place order");
+    }
+  });
+
+  // Calculate total from cart items
+  const total = cart.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0);
+
   if (cart.length === 0) {
     return (
       <div className="flex flex-col min-h-screen bg-background">
@@ -64,12 +143,26 @@ export default function CheckoutPage() {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Prepare order data according to backend API
+    const orderPayload = {
+      type: "multi",
+      ...(promoCode && { couponCode: promoCode }),
+      cart: orderData.length > 0 ? orderData : cart.map((item: any) => ({
+        cartId: item._id,
+        quantity: item.quantity,
+        totalPrice: item.totalPrice
+      })),
+      deliveryDetails: {
+        fullName: formData.fullName,
+        email: formData.email,
+        address: formData.address,
+        phone: formData.phone,
+        note: formData.note
+      }
+    };
 
-    setOrderPlaced(true);
-    setLoading(false);
-    // clearCart();
+    console.log('Order payload:', orderPayload);
+    ordersMutation.mutate(orderPayload);
   };
 
   if (orderPlaced) {
@@ -89,7 +182,7 @@ export default function CheckoutPage() {
             <div className="bg-card border border-border rounded-lg p-6 mb-8 text-left">
               <p className="text-sm text-muted-foreground mb-2">Order Number</p>
               <p className="text-2xl font-bold font-mono">
-                #SGP{Math.random().toString(36).substring(7).toUpperCase()}
+                {orderId ? `#${orderId}` : `#SGP${Math.random().toString(36).substring(7).toUpperCase()}`}
               </p>
             </div>
 
@@ -124,14 +217,9 @@ export default function CheckoutPage() {
             </Link>
           </div>
         </div>
-
-  
       </div>
     );
   }
-
-  const tax =  0.08; // fixed korte hobe
-  const total = 55270; //eataw fixed korte hobe
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -253,8 +341,8 @@ export default function CheckoutPage() {
                         Special Instructions (Optional)
                       </label>
                       <textarea
-                        name="instructions"
-                        value={formData.instructions}
+                        name="note"
+                        value={formData.note}
                         onChange={handleInputChange}
                         className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                         rows={3}
@@ -264,50 +352,27 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Payment Method */}
-                <div className="bg-card border border-border rounded-lg p-6">
-                  <h2 className="text-xl font-bold mb-6">Payment Method</h2>
-                  <div className="space-y-3">
-                    <label className="flex items-center gap-3 p-4 border-2 border-primary bg-primary/10 rounded-lg cursor-pointer">
-                      <input
-                        type="radio"
-                        name="payment"
-                        value="card"
-                        defaultChecked
-                        className="w-4 h-4"
-                      />
-                      <div className="flex items-center gap-2">
-                        <CreditCard className="w-5 h-5" />
-                        <span className="font-semibold">Credit/Debit Card</span>
-                      </div>
-                    </label>
-                    <label className="flex items-center gap-3 p-4 border-2 border-border rounded-lg cursor-pointer hover:border-primary/50">
-                      <input
-                        type="radio"
-                        name="payment"
-                        value="cash"
-                        className="w-4 h-4"
-                      />
-                      <span className="font-semibold">Cash on Delivery</span>
-                    </label>
+                {/* Promo Code Display */}
+                {promoCode && (
+                  <div className="bg-card border border-border rounded-lg p-6">
+                    <h2 className="text-xl font-bold mb-4">Promo Code Applied</h2>
+                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <span className="text-green-700 font-medium">{promoCode}</span>
+                      <span className="text-green-600">✓ Applied</span>
+                    </div>
                   </div>
-
-                  <div className="mt-6 p-4 bg-secondary/50 rounded-lg">
-                    <p className="text-sm text-muted-foreground mb-4">
-                      For this demo, payments are simulated. In production,
-                      integrate with Stripe or another payment processor.
-                    </p>
-                  </div>
-                </div>
+                )}
 
                 {/* Submit */}
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || ordersMutation.isPending || paymentMutation.isPending}
                   size="lg"
-                  className="w-full bg-primary hover:bg-primary/90"
+                  className="w-full bg-[#D62828] cursor-pointer hover:bg-[#ff7878]"
                 >
-                  {loading ? "Processing..." : "Place Order"}
+                  {loading || ordersMutation.isPending || paymentMutation.isPending 
+                    ? "Processing..." 
+                    : "Place Order"}
                 </Button>
               </form>
             </div>
@@ -318,13 +383,18 @@ export default function CheckoutPage() {
                 <h3 className="text-xl font-bold mb-6">Order Summary</h3>
 
                 <div className="space-y-3 mb-6 pb-6 border-b border-border max-h-64 overflow-y-auto">
-                  {cart.map((item:any) => (
-                    <div key={String(item.id)} className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {item.name} x{item.quantity}
-                      </span>
+                  {cart.map((item: any) => (
+                    <div key={item._id} className="flex justify-between text-sm">
+                      <div>
+                        <span className="font-medium">
+                          {item.type === 'menu' && item.menu ? item.menu.menuId.name : 'Custom Pizza'}
+                        </span>
+                        <span className="text-muted-foreground ml-2">
+                          x{item.quantity}
+                        </span>
+                      </div>
                       <span className="font-medium">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        ${item.totalPrice.toFixed(2)}
                       </span>
                     </div>
                   ))}
@@ -335,10 +405,19 @@ export default function CheckoutPage() {
                     <span className="text-muted-foreground">Subtotal</span>
                     <span>${total.toFixed(2)}</span>
                   </div>
+                  
+                  {promoCode && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>Promo Code ({promoCode})</span>
+                      <span>-${(total * 0.05).toFixed(2)}</span>
+                    </div>
+                  )}
+
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Tax (8%)</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span>${(total * 0.08).toFixed(2)}</span>
                   </div>
+                  
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Delivery</span>
                     <span>Free</span>
@@ -348,7 +427,7 @@ export default function CheckoutPage() {
                 <div className="flex justify-between items-center">
                   <span className="font-bold">Total</span>
                   <span className="text-2xl font-bold text-primary">
-                    ${total.toFixed(2)}
+                    ${(total + (total * 0.08)).toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -356,7 +435,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </section>
-
     </div>
   );
 }

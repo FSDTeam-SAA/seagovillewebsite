@@ -5,16 +5,25 @@ import { Input } from "@/components/ui/input";
 import { Mail } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { subscription } from "@/lib/api";
+import { toast } from "sonner";
 
 const Subscribe = () => {
   const [email, setEmail] = useState('')
   const handelMutation = useMutation({
     mutationKey: ['subscription'],
-    mutationFn: (email: string) => subscription( email )
+    mutationFn: (email: string) => subscription( email ),
+    onSuccess:(data)=>{
+      toast.success(data.message)
+    },
+    onError:(error)=>{
+      toast.error(error.message)
+    }
   })
 
   const handelSubScription = () => {
     handelMutation.mutate(email)
+    
+    setEmail('')
   }
 
   return (
@@ -55,7 +64,7 @@ const Subscribe = () => {
                 onClick={() => handelSubScription()}
                 size="lg"
 
-                className="h-12 px-8 bg-primary hover:bg-primary/90 text-white font-semibold transition-all duration-300 hover:scale-105"
+                className="h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-white font-semibold transition-all duration-300 hover:scale-105"
               >
                 Subscribe Now
               </Button>

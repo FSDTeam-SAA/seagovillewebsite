@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { useState } from "react"
 import { ShoppingCart, X } from 'lucide-react'
@@ -8,16 +9,16 @@ import { SelectionGrid } from "@/components/selection-grid"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { PizzaBuilderPreview } from "@/components/pizza/pizza-builder-preview"
-import { useQuery } from "@tanstack/react-query"
-import { fetchToppingsCatagory, fetchToppingsCategoryFilter } from "@/lib/api"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { CustomaddToCart, customOrder, fetchToppingsCatagory, fetchToppingsCategoryFilter } from "@/lib/api"
 import { CustomizationItem } from "@/lib/cusomizetype"
-
 
 const STEPS = ["Size", "Crust", "Sauce", "Cheese", "Toppings", "Review"]
 
 export default function PizzaBuilderPage() {
   const [currentStep, setCurrentStep] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState<string>('')
+  const [orderId, setOrderId] = useState('')
 
   const { state, setSize, setCrust, setSauce, setCheese, addTopping, removeTopping } =
     usePizzaBuilder()
@@ -25,23 +26,50 @@ export default function PizzaBuilderPage() {
   const { sizes, crusts, sauces, cheeses, loading, error } =
     useCustomizationData()
 
+  console.log('state data ', state)
+
   // Fetch topping categories
   const { data: toppingCategoriesData } = useQuery({
     queryKey: ['topping-categories'],
     queryFn: fetchToppingsCatagory,
   })
 
-  console.log('safdgfhgfdss',toppingCategoriesData?.categories)
-
   // Fetch toppings by selected category
   const { data: toppingsData } = useQuery({
     queryKey: ['toppings', selectedCategory],
     queryFn: () => fetchToppingsCategoryFilter(selectedCategory),
-    enabled: !!selectedCategory, // Only fetch when category is selected
+    enabled: !!selectedCategory,
   })
- console.log('2',toppingsData)
-  const toppingCategories = toppingCategoriesData?.data?.categories || []
+
+  const toppingCategories = toppingCategoriesData?.categories || []
   const toppings = toppingsData?.data || []
+
+  // Custom order mutation
+  const customOrderMutation = useMutation({
+    mutationFn: customOrder,
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to create custom pizza")
+    },
+    onSuccess: (data) => {
+      setOrderId(data?.data?._id)
+      console.log('custorm order data',data?.data?._id)
+      console.log('custorm order data 2',data )
+    
+      toast.success("Custom pizza created successfully!")
+    }
+  })
+
+  // Custom cart mutation
+  const customCartMutation = useMutation({
+    mutationFn: CustomaddToCart,
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to add to cart")
+    },
+    onSuccess: (data) => {
+      toast.success("Added to cart successfully!")
+      window.location.href = "/cart"
+    }
+  })
 
   const isStepValid = (): boolean => {
     switch (currentStep) {
@@ -54,16 +82,42 @@ export default function PizzaBuilderPage() {
       case 3:
         return !!state.cheese
       case 4:
-        return true
+        return true 
       case 5:
-        return true
+        return !!orderId 
       default:
         return false
     }
   }
 
-  const handleNext = () => {
-    if (currentStep < STEPS.length - 1) {
+  const handleNext = async () => {
+    if (currentStep === 4) {
+      // When moving from Toppings to Review, create the custom order
+      if (!state.size || !state.crust || !state.sauce || !state.cheese) {
+        toast.error("Please complete all required selections")
+        return
+      }
+
+      try {
+        // Prepare the order data in the required format
+        const orderData = {
+          size: state.size._id,
+          crust: state.crust._id,
+          sauce: state.sauce._id,
+          cheese: state.cheese._id,
+          toppings: state.toppings.map(topping => ({
+            toppingId: topping._id,
+            category: topping.category
+          }))
+        }
+ 
+        await customOrderMutation.mutateAsync(orderData)
+        setCurrentStep(currentStep + 1)
+      } catch (error) {
+        // Error is handled in the mutation
+        return
+      }
+    } else if (currentStep < STEPS.length - 1) {
       setCurrentStep(currentStep + 1)
     }
   }
@@ -75,22 +129,12 @@ export default function PizzaBuilderPage() {
   }
 
   const handleAddToCart = () => {
-    if (!state.size || !state.crust || !state.sauce || !state.cheese) {
-      toast.error("Please complete all required selections")
+    if (!orderId) {
+      toast.error("Please complete your pizza customization first")
       return
     }
 
-    const basePrice = 12.99
-    const totalPrice =
-      basePrice +
-      state.size.price +
-      state.crust.price +
-      state.sauce.price +
-      state.cheese.price +
-      state.toppings.reduce((sum, t) => sum + t.price, 0)
-
-    toast.success("WoW! Successfully added the pizza to your cart")
-    window.location.href = "/cart"
+    customCartMutation.mutate(orderId)
   }
 
   // Loading state for main customization data
@@ -148,9 +192,7 @@ export default function PizzaBuilderPage() {
                     <h2 className="text-2xl font-bold mb-6">Choose Your Size</h2>
                     <SelectionGrid
                       items={sizes}
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      selectedId={state.size?.id ?? (state.size as any)?._id}
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      selectedId={state.size?._id}
                       onSelect={(item) => setSize(item as any)}
                     />
                   </div>
@@ -162,9 +204,7 @@ export default function PizzaBuilderPage() {
                     <h2 className="text-2xl font-bold mb-6">Choose Your Crust</h2>
                     <SelectionGrid
                       items={crusts}
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      selectedId={state.crust?.id ?? (state.crust as any)?._id}
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      selectedId={state.crust?._id}
                       onSelect={(item) => setCrust(item as any)}
                     />
                   </div>
@@ -176,9 +216,7 @@ export default function PizzaBuilderPage() {
                     <h2 className="text-2xl font-bold mb-6">Choose Your Sauce</h2>
                     <SelectionGrid
                       items={sauces}
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      selectedId={state.sauce?.id ?? (state.sauce as any)?._id}
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      selectedId={state.sauce?._id}
                       onSelect={(item) => setSauce(item as any)}
                     />
                   </div>
@@ -190,9 +228,7 @@ export default function PizzaBuilderPage() {
                     <h2 className="text-2xl font-bold mb-6">Choose Your Cheese</h2>
                     <SelectionGrid
                       items={cheeses}
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      selectedId={state.cheese?.id ?? (state.cheese as any)?._id}
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      selectedId={state.cheese?._id}
                       onSelect={(item) => setCheese(item as any)}
                     />
                   </div>
@@ -207,7 +243,7 @@ export default function PizzaBuilderPage() {
                     <div className="mb-6 p-4 bg-secondary/50 rounded-lg">
                       <h3 className="font-semibold mb-3">Choose Topping Category</h3>
                       <div className="flex flex-wrap gap-2">
-                        {toppingCategoriesData?.categories.map((category: string) => (
+                        {toppingCategories.map((category: string) => (
                           <button
                             key={category}
                             onClick={() => setSelectedCategory(category)}
@@ -250,7 +286,6 @@ export default function PizzaBuilderPage() {
                                     if (isSelected) {
                                       removeTopping(topping._id)
                                     } else if (state.toppings.length < 10) {
-                                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                       addTopping(topping as any)
                                     }
                                   }}
@@ -376,18 +411,19 @@ export default function PizzaBuilderPage() {
                 {currentStep < STEPS.length - 1 ? (
                   <Button
                     onClick={handleNext}
-                    disabled={!isStepValid()}
+                    disabled={!isStepValid() || customOrderMutation.isPending}
                     className="flex-1 bg-[#D62828] hover:bg-[#b81e1e] text-white"
                   >
-                    Next
+                    {customOrderMutation.isPending && currentStep === 6 ? "Creating..." : "Next"}
                   </Button>
                 ) : (
                   <Button
                     onClick={handleAddToCart}
+                    disabled={customCartMutation.isPending}
                     className="flex-1 bg-[#D62828] hover:bg-[#b81e1e] text-white"
                   >
                     <ShoppingCart className="w-4 h-4 mr-2" />
-                    Add to Cart
+                    {customCartMutation.isPending ? "Adding..." : "Add to Cart"}
                   </Button>
                 )}
               </div>

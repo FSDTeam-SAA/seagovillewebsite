@@ -1,30 +1,36 @@
 "use client"
-import { CustomizationItem, singledata, SizeResponse, SizeResponseData } from '@/lib/cusomizetype'
 import { Check } from 'lucide-react'
+import React from "react"
 
+interface BaseItem {
+  _id: string;
+  name: string;
+  description?: string;
+  isAvailable?: boolean;
+  price: number;
+}
 
-interface SelectionGridProps {
-  items: CustomizationItem[] | { data?: CustomizationItem[] }
+interface SelectionGridProps<T extends BaseItem> {
+  items?: T[] | { data: T[] }
   selectedId?: string
-  onSelect: (item: CustomizationItem) => void
+  onSelect: (item: T) => void
   columns?: number
 }
 
-export function SelectionGrid({
+export function SelectionGrid<T extends BaseItem>({
   items,
   selectedId,
   onSelect,
   columns = 2,
-}: SelectionGridProps) {
+}: SelectionGridProps<T>) {
 
-// Normalize whether items is an array or an object with `data`
-const list: CustomizationItem[] = Array.isArray(items) ? items : (items?.data ?? [])
-console.log(items, list, 'show data')
-
+  // Normalize whether items is an array or an object with `data`
+  const list: T[] = Array.isArray(items) ? items : (items?.data ?? [])
+  console.log(items, list, 'show data')
 
   return (
     <div className={`grid grid-cols-${columns} gap-4`}>
-      {list?.map((item:CustomizationItem) => (
+      {list?.map((item: T) => (
         <button
           key={item._id}
           onClick={() => onSelect(item)}
