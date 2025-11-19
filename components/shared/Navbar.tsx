@@ -21,6 +21,8 @@ const Navbar = () => {
     queryFn:()=>getCartItems()
   })
 
+  console.log('cart data',cart)
+
   const navItems = [
     { name: "Home", href: "/" },
     { name: "Menu", href: "/menu" },
@@ -103,9 +105,9 @@ const Navbar = () => {
               </Button>
             </Link>
 
-            <Button className="hidden sm:inline-flex bg-primary hover:bg-primary/90">
+            {/* <Button className="hidden sm:inline-flex bg-primary hover:bg-primary/90">
               Order Now
-            </Button>
+            </Button> */}
 
             <button
               className="lg:hidden"

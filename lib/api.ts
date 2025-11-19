@@ -3,6 +3,7 @@ import { CartItem, MenuItem } from "@/lib/types";
 import { toast } from "sonner";
 import { CustomizationItem } from "./cusomizetype";
 import { da } from "zod/v4/locales";
+import { threadId } from "worker_threads";
 const api=process.env.NEXT_PUBLIC_API_URL
 
 export async function getFacilities(category: string, page: number) {
@@ -59,6 +60,25 @@ export async function fetchPizzaById(id: string) {
 }
 
 
+// review
+ export async function getAllReview() {
+  try{
+    const res= await fetch(`${api}/review`,{
+      method:"GET",
+      headers:{
+        "content-Type":"application/json"
+      }
+    })
+    const data= res.json();
+    return data;
+  }catch(error){
+    if(error instanceof Error){
+      throw new Error(`${error.message}`)
+    }
+  }
+  
+ }
+
 export async function createReview(data: {
   rating: number;
   name: string;
@@ -108,7 +128,7 @@ export const getCartItems = async () => {
     }
 
     const data = await res.json();
-    return data.items || [];
+    return data.data || [];
   } catch (error) {
     console.error("Error fetching cart items:", error);
     toast.error("Failed to load cart items");
@@ -119,12 +139,16 @@ export const getCartItems = async () => {
 // Add item to cart
 export const addToCart = async (menuId: string, types: "small" | "medium" | "large"): Promise<CartItem | null> => {
   try {
+    const type = 'menu';
     const res = await fetch(`${api}/add-cart/add-to-cart`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ menu: { menuId, types } }),
+      body: JSON.stringify({
+        menu: { menuId, types },
+        type
+      }),
     });
 
     if (!res.ok) {
@@ -139,6 +163,63 @@ export const addToCart = async (menuId: string, types: "small" | "medium" | "lar
     console.error("Error adding to cart:", error);
     toast.error(error instanceof Error ? error.message : "Failed to add to cart");
     return null;
+  }
+};
+
+// Custom order creation
+export const customOrder = async (orderData: {
+  size: string;
+  crust: string;
+  sauce: string;
+  cheese: string;
+  toppings: Array<{ toppingId: string; category: string }>;
+}) => {
+  try {
+    const res = await fetch(`${api}/own-pizza/create-new`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderData),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Failed to create custom pizza");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error creating custom pizza:", error);
+    throw error;
+  }
+};
+
+// Add custom pizza to cart
+export const CustomaddToCart = async (ownPizzaId: string) => {
+  try {
+    const res = await fetch(`${api}/add-cart/add-to-cart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ownPizzaId,
+        type: "ownPizza"
+      }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Failed to add to cart");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    throw error;
   }
 };
 
@@ -329,5 +410,153 @@ export async function subscription(email:string) {
     if(error instanceof Error ){
       throw new Error(`${error}`)
     }
+  }
+}
+
+//contact 
+
+export async function createContact({
+  firstName,
+  lastName,
+  email,
+  phone,
+  message
+}: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string; 
+  message: string;
+}) {
+  try {
+    const requestBody = {
+      firstName,
+      lastName,
+      email,
+      phone,
+      message
+    };
+
+    console.log('Sending request body:', requestBody); 
+    const res = await fetch(`${api}/contact/send-message`, {
+      method: "POST",
+      headers: {
+        'Content-Type': "application/json", 
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    console.log('Response status:', res.status); 
+
+
+    if (!res.ok) {
+      let errorMessage = `Request failed with status ${res.status}`;
+      try {
+        const errorData = await res.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch {
+        
+        errorMessage = res.statusText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+
+    const data = await res.json();
+    console.log('Success response:', data); 
+
+    return data;
+  } catch (error) {
+    console.error('Fetch error:', error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('An unknown error occurred');
+  }
+}
+
+
+// copincode 
+
+export async function getCopons() {
+  try{
+   const res= await fetch(`${api}/coupons`,{
+    method:"POST",
+    headers:{
+       "Content-Type":"aplication/json"
+    }
+   })
+  }catch(error){
+    if(error instanceof Error){
+      throw new Error(`${error}`)
+    }
+  }
+  
+}
+
+
+// order
+
+// In your api.ts file
+export interface NewOrderPayload {
+  type:string;
+  couponCode?: string;
+  cart: Array<{
+    cartId: string;
+    quantity: number;
+    totalPrice: number;
+  }>;
+  deliveryDetails: {
+    fullName: string;
+    email: string;
+    address: string;
+    phone: string;
+    note: string;
+  };
+}
+
+export async function newOrder(orderData: NewOrderPayload) {
+  try {
+    const res = await fetch(`${api}/order/new-order`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderData),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Failed to place order");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error placing order:", error);
+    throw error;
+  }
+}
+
+
+export async function payment(orderId:string) {
+  try {
+    const res = await fetch(`${api}/payment/new-payment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({orderId}),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Failed to place order");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error placing order:", error);
+    throw error;
   }
 }
