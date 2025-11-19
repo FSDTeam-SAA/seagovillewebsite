@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/purity */
 /**
@@ -21,6 +22,8 @@ import { getCartItems, newOrder, payment } from "@/lib/api";
 import { useCart } from "@/context/cartContext";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import StripePayment from "../StripePayment";
+import { PaymentData } from "@/lib/cartType";
 
 interface DeliveryDetails {
   fullName: string;
@@ -44,7 +47,7 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState<string>('');
   const searchParams = useSearchParams();
   const [promoCode, setPromoCode] = useState('');
-  const [paymentData,setPyementData]=useState({})
+  const [paymentData,setPyementData]=useState<PaymentData |null>(null)
   const [formData, setFormData] = useState<DeliveryDetails>({
     fullName: "",
     email: "",
@@ -60,7 +63,7 @@ export default function CheckoutPage() {
     if (couponCode) {
       setPromoCode(couponCode);
     }
-  }, [searchParams]);
+  }, []);
 
   const { data: cart = [] } = useQuery({
     queryKey: ['cart'],
@@ -79,6 +82,8 @@ export default function CheckoutPage() {
         clientSecret: data?.data?.clientSecret,
         paymentId: data?.data?.paymentId,
       })
+      
+      // i want to this filed use stripe my clientsecrect and paymentorderid in here: paymentData
       setOrderPlaced(true);
     },
     onError: (error: Error) => {
@@ -164,62 +169,70 @@ export default function CheckoutPage() {
     console.log('Order payload:', orderPayload);
     ordersMutation.mutate(orderPayload);
   };
+   if (paymentData?.clientSecret) {
+        return (
+          <div className="max-w-lg mx-auto mt-20">
+            <h1 className="text-2xl font-bold mb-4 text-center">Complete Payment</h1>
 
-  if (orderPlaced) {
-    return (
-      <div className="flex flex-col min-h-screen bg-background">
-        <div className="flex-1 flex items-center justify-center py-20">
-          <div className="text-center max-w-md">
-            <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
-              ✓
-            </div>
-            <h1 className="text-3xl font-bold mb-4">Order Confirmed!</h1>
-            <p className="text-muted-foreground mb-8">
-              Thank you for your order. Your delicious pizza will be delivered
-              in 30-40 minutes.
-            </p>
-
-            <div className="bg-card border border-border rounded-lg p-6 mb-8 text-left">
-              <p className="text-sm text-muted-foreground mb-2">Order Number</p>
-              <p className="text-2xl font-bold font-mono">
-                {orderId ? `#${orderId}` : `#SGP${Math.random().toString(36).substring(7).toUpperCase()}`}
-              </p>
-            </div>
-
-            <div className="space-y-4 text-left mb-8">
-              <div className="flex gap-3">
-                <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    Delivery Address
-                  </p>
-                  <p className="font-semibold">{formData.address}</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <Clock className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    Estimated Delivery
-                  </p>
-                  <p className="font-semibold">30-40 minutes</p>
-                </div>
-              </div>
-            </div>
-
-            <Link href="/">
-              <Button
-                size="lg"
-                className="w-full bg-primary hover:bg-primary/90"
-              >
-                Back to Home
-              </Button>
-            </Link>
+            <StripePayment clientSecret={paymentData.clientSecret} />
           </div>
-        </div>
-      </div>
-    );
-  }
+        );
+      }
+  // if (orderPlaced) {
+  //   return (
+  //     <div className="flex flex-col min-h-screen bg-background">
+  //       <div className="flex-1 flex items-center justify-center py-20">
+  //         <div className="text-center max-w-md">
+  //           <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
+  //             ✓
+  //           </div>
+  //           <h1 className="text-3xl font-bold mb-4">Order Confirmed!</h1>
+  //           <p className="text-muted-foreground mb-8">
+  //             Thank you for your order. Your delicious pizza will be delivered
+  //             in 30-40 minutes.
+  //           </p>
+
+  //           <div className="bg-card border border-border rounded-lg p-6 mb-8 text-left">
+  //             <p className="text-sm text-muted-foreground mb-2">Order Number</p>
+  //             <p className="text-2xl font-bold font-mono">
+  //               {orderId ? `#${orderId}` : `#SGP${Math.random().toString(36).substring(7).toUpperCase()}`}
+  //             </p>
+  //           </div>
+
+  //           <div className="space-y-4 text-left mb-8">
+  //             <div className="flex gap-3">
+  //               <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+  //               <div>
+  //                 <p className="text-sm text-muted-foreground">
+  //                   Delivery Address
+  //                 </p>
+  //                 <p className="font-semibold">{formData.address}</p>
+  //               </div>
+  //             </div>
+  //             <div className="flex gap-3">
+  //               <Clock className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+  //               <div>
+  //                 <p className="text-sm text-muted-foreground">
+  //                   Estimated Delivery
+  //                 </p>
+  //                 <p className="font-semibold">30-40 minutes</p>
+  //               </div>
+  //             </div>
+  //           </div>
+
+  //           <Link href="/">
+  //             <Button
+  //               size="lg"
+  //               className="w-full bg-primary hover:bg-primary/90"
+  //             >
+  //               Back to Home
+  //             </Button>
+  //           </Link>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex flex-col min-h-screen bg-background">

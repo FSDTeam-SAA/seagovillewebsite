@@ -75,3 +75,12 @@ export interface CartItem {
   createdAt?: string;
   updatedAt?: string;
 }
+
+
+
+// payment interface
+
+export interface PaymentData {
+  clientSecret: string;
+  paymentId: string;
+}
