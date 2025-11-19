@@ -49,13 +49,13 @@ const handleAddToCart = async (
 };
   const handleOpenSizeDialog = (pizza: MenuItem) => {
     setSelectedPizza(pizza);
-    setSelectedSize("small"); // Reset to default size when opening dialog
+    setSelectedSize("small"); 
   };
 
   const handleConfirmAddToCart = () => {
     if (selectedPizza) {
       handleAddToCart(selectedPizza, selectedSize);
-      setSelectedPizza(null); // Close dialog after adding
+      setSelectedPizza(null); 
     }
   };
 
