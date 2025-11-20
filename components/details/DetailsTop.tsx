@@ -2,10 +2,11 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Star, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import { addToCart } from "@/lib/api";
 import { MenuResponse } from "@/lib/detailstype";
+ 
 
 interface SizeOption {
   size: string;
@@ -83,10 +84,10 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
     }
   };
 
-  const handleOrderNow = () => {
-    handleAddToCart();
-    // You can add navigation to cart or checkout here
-  };
+  // const handleOrderNow = () => {
+  //   handleAddToCart();
+  //   // You can add navigation to cart or checkout here
+  // };
 
   return (
     <section className="py-12 bg-gradient-to-b from-white to-orange-50">
@@ -226,13 +227,20 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart
               </button>
-              <button
-                onClick={handleOrderNow}
-                disabled={!singlePizza.isAvailable}
-                className="flex-1 cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              <a
+                href={
+                  "https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road"
+                }
+                target="_blank"
+                className="flex-1 cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed "
               >
-                Order Now
-              </button>
+                <button
+                // onClick={handleOrderNow}
+                // disabled={!singlePizza.isAvailable}
+                >
+                  Order Now
+                </button>
+              </a>
             </div>
 
             {/* Additional Info */}
