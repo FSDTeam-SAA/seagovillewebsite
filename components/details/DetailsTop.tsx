@@ -16,50 +16,57 @@ interface SizeOption {
 
 export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
   const singlePizza = pizza?.data;
-  const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("small");
+  const [selectedSize, setSelectedSize] = useState<
+    "small" | "medium" | "large"
+  >("small");
   // console.log('imagess',singlePizza.images)
-  const [mainImage, setMainImage] = useState(singlePizza?.images[0]?.url || "/detail2.jpg");
+  const [mainImage, setMainImage] = useState(
+    singlePizza?.images[0]?.url || "/detail2.jpg"
+  );
 
   // Use actual pizza data for size options
   const sizeOptions: SizeOption[] = [
-    { 
-      size: "Small Size", 
-      price: singlePizza.price.small, 
+    {
+      size: "Small Size",
+      price: singlePizza.price.small,
       description: "Perfect for one person",
-      key: "small"
+      key: "small",
     },
-    { 
-      size: "Medium Size", 
-      price: singlePizza.price.medium, 
+    {
+      size: "Medium Size",
+      price: singlePizza.price.medium,
       description: "Great for sharing",
-      key: "medium"
+      key: "medium",
     },
-    { 
-      size: "Large Size", 
-      price: singlePizza.price.large, 
+    {
+      size: "Large Size",
+      price: singlePizza.price.large,
       description: "Family size feast",
-      key: "large"
+      key: "large",
     },
   ];
 
   // Use actual ingredients if available, otherwise fallback
-  const ingredients = singlePizza.ingredients && singlePizza.ingredients.length > 0 
-    ? singlePizza.ingredients 
-    : [
-        "Fresh mozzarella cheese",
-        "Premium tomato sauce",
-        "Fresh herbs and spices",
-        "Quality selected toppings",
-        "Hand-tossed dough",
-        "100% natural ingredients",
-      ];
+  const ingredients =
+    singlePizza.ingredients && singlePizza.ingredients.length > 0
+      ? singlePizza.ingredients
+      : [
+          "Fresh mozzarella cheese",
+          "Premium tomato sauce",
+          "Fresh herbs and spices",
+          "Quality selected toppings",
+          "Hand-tossed dough",
+          "100% natural ingredients",
+        ];
 
   // Use all available images or fallback to multiple copies of the main image
-  const images = singlePizza.images && singlePizza.images.length > 0 
-    ? singlePizza.images.map(img => img.url)
-    : [singlePizza.images[0]?.url || "/placeholder.svg"];
+  const images =
+    singlePizza.images && singlePizza.images.length > 0
+      ? singlePizza.images.map((img) => img.url)
+      : [singlePizza.images[0]?.url || "/placeholder.svg"];
 
-  const selectedSizeData = sizeOptions.find(option => option.key === selectedSize) || sizeOptions[0];
+  const selectedSizeData =
+    sizeOptions.find((option) => option.key === selectedSize) || sizeOptions[0];
 
   const handleAddToCart = async () => {
     const price = singlePizza.price[selectedSize];
@@ -70,7 +77,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
     }
 
     const cartItem = await addToCart(singlePizza._id, selectedSize);
-    
+
     if (cartItem) {
       toast.success("WoW! Successfully added the pizza to your cart");
     }
@@ -86,14 +93,14 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Left: Pizza Image */}
-          <div className="flex flex-col gap-4 max-w-full mx-auto px-4">
+          <div className="flex flex-col gap-4 w-full  mx-auto px-4">
             {/* Main Image */}
             <div className="relative bg-white rounded-lg overflow-hidden shadow-lg w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
               <Image
                 src={mainImage}
                 alt={singlePizza.name}
                 fill
-                className="object-cover"
+                className="object-cover w-full  h-full"
                 priority
               />
             </div>
@@ -105,7 +112,9 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
                   <button
                     key={i}
                     className={`relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-colors ${
-                      mainImage === img ? "border-red-500" : "border-transparent"
+                      mainImage === img
+                        ? "border-red-500"
+                        : "border-transparent"
                     }`}
                     onClick={() => setMainImage(img)}
                   >
@@ -128,7 +137,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
                 {singlePizza.name}
               </h1>
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <div className="flex gap-1">
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -140,7 +149,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
                 <span className="text-gray-600 ml-2">
                   5.00 ({singlePizza.totalSold || 0} sold)
                 </span>
-              </div>
+              </div> */}
             </div>
 
             {/* Description */}
@@ -197,17 +206,19 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
             </div>
 
             {/* Availability */}
-            <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-              singlePizza.isAvailable 
-                ? 'bg-green-100 text-green-800' 
-                : 'bg-red-100 text-red-800'
-            }`}>
-              {singlePizza.isAvailable ? 'In Stock' : 'Out of Stock'}
+            <div
+              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                singlePizza.isAvailable
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              {singlePizza.isAvailable ? "In Stock" : "Out of Stock"}
             </div>
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <button 
+              <button
                 onClick={handleAddToCart}
                 disabled={!singlePizza.isAvailable}
                 className="flex-1 cursor-pointer bg-white hover:bg-gray-50 text-red-600 border border-red-600 font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -215,7 +226,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart
               </button>
-              <button 
+              <button
                 onClick={handleOrderNow}
                 disabled={!singlePizza.isAvailable}
                 className="flex-1 cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -229,11 +240,15 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="font-semibold">Category:</span>
-                  <span className="ml-2 text-gray-600 capitalize">{singlePizza.category}</span>
+                  <span className="ml-2 text-gray-600 capitalize">
+                    {singlePizza.category}
+                  </span>
                 </div>
                 <div>
                   <span className="font-semibold">Total Sold:</span>
-                  <span className="ml-2 text-gray-600">{singlePizza.totalSold || 0}</span>
+                  <span className="ml-2 text-gray-600">
+                    {singlePizza.totalSold || 0}
+                  </span>
                 </div>
               </div>
             </div>
@@ -242,7 +257,9 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
 
         {/* Detailed Description */}
         <div className="mt-16 border-t pt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Detailed Description</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Detailed Description
+          </h2>
           <p className="text-gray-700 leading-relaxed mb-4">
             {singlePizza.description}
           </p>
