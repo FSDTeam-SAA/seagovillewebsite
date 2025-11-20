@@ -52,7 +52,7 @@ const ContactUs = () => {
             return (
               <article
                 key={index}
-                className="shadow-2xl bg-white rounded-xl text-center p-6 hover:shadow-md transition-shadow duration-300"
+                className="shadow-xl bg-white rounded-xl text-center p-6 hover:shadow-md transition-shadow duration-300"
               >
                 <div className="text-sm font-medium text-[#FB2C36] bg-[#F9DFDF] border py-3 px-3 rounded-full inline-block border-[#F2BCBC] tracking-wider leading-[150%] mb-4">
                   <Icon className="w-6 h-6" />

@@ -11,10 +11,10 @@ export function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
         const isActive = index === currentStep
 
         return (
-          <div key={index} className="flex items-center">
+          <div key={index} className="flex  flex-wrap items-center">
             <div
               className={`
-                w-10 h-10 rounded-full flex items-center justify-center font-bold
+                w-10 h-10 rounded-full flex  items-center justify-center font-bold
                 transition-all
                 ${isActive ? "bg-[#D62828] text-white ring-4 ring-[#D62828]/30" : ""}
                 ${isCompleted ? "bg-[#D62828] text-white" : ""}

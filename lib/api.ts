@@ -7,6 +7,7 @@ import { CustomizationItem } from "./cusomizetype";
 const api = process.env.NEXT_PUBLIC_API_URL
 
 export async function getFacilities(category: string, page: number) {
+  console.log('test ca',category)
   try {
     const queryParams = new URLSearchParams();
 
@@ -33,7 +34,24 @@ export async function getFacilities(category: string, page: number) {
     throw error;
   }
 }
+export async function getallDataForCatagory() {
+ 
+  try {
+    
+    const res = await fetch(`${api}/menu/all-menus`);
+    const data = await res.json();
 
+    return {
+      items: data?.data ?? [],
+     
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching menus: ${error.message}`);
+    }
+
+  }
+}
 export async function fetchPizzaById(id: string) {
   try {
     const res = await fetch(`${api}/menu/${id}`, {
@@ -157,7 +175,7 @@ export const addToCart = async (menuId: string, types: "small" | "medium" | "lar
     }
 
     const data = await res.json();
-    toast.success("Added to cart successfully!");
+    // toast.success("Added to cart successfully!");
     return data.item;
   } catch (error) {
     console.error("Error adding to cart:", error);

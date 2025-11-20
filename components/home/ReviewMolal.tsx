@@ -62,7 +62,7 @@ const onSubmit = async (data: z.infer<typeof formSchema>) => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Write a Review</DialogTitle>
+          <DialogTitle className="text-[#343A40] text-[18px] leading-[150%] font-semibold">Write a Review</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -118,10 +118,10 @@ const onSubmit = async (data: z.infer<typeof formSchema>) => {
 
           <DialogFooter className="flex justify-between">
             <DialogClose asChild>
-              <Button variant="secondary">Close</Button>
+              <Button variant="secondary">Cancel</Button>
             </DialogClose>
 
-            <Button type="submit">Submit Review</Button>
+            <Button className="bg-[#D62828] " type="submit">Submit</Button>
           </DialogFooter>
         </form>
       </DialogContent>
