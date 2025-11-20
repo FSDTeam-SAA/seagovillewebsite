@@ -17,7 +17,7 @@ interface SizeOption {
 export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
   const singlePizza = pizza?.data;
   const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("small");
-  console.log('imagess',singlePizza.images)
+  // console.log('imagess',singlePizza.images)
   const [mainImage, setMainImage] = useState(singlePizza?.images[0]?.url || "/detail2.jpg");
 
   // Use actual pizza data for size options
