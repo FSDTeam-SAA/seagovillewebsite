@@ -113,7 +113,7 @@ export function CartItemCard({
           size="sm"
           variant="ghost"
           onClick={onRemove}
-          className="text-destructive hover:bg-destructive/10"
+          className="text-destructive hover:bg-destructive/10 cursor-pointer"
           disabled={isUpdating} // Add this line
         >
           <Trash2 className="w-4 h-4" />

@@ -285,7 +285,7 @@ const CartItems = () => {
                     <Link href="/menu" className="flex-1">
                       <Button
                         variant="outline"
-                        className="w-full bg-transparent"
+                        className="w-full bg-transparent cursor-pointer"
                       >
                         <ArrowLeft className="w-4 h-4 mr-2" />
                         Continue Shopping
