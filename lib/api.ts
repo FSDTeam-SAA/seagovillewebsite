@@ -301,11 +301,11 @@ export const removeCartItem = async (itemId: string): Promise<boolean> => {
       throw new Error("Failed to remove item");
     }
 
-    toast.success("Item removed from cart");
+    // toast.success("Item removed from cart");
     return true;
   } catch (error) {
     console.error("Error removing item:", error);
-    toast.error("Failed to remove item");
+    // toast.error("Failed to remove item");
     return false;
   }
 };
