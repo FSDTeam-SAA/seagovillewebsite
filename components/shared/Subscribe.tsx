@@ -50,21 +50,21 @@ const Subscribe = () => {
 
           {/* Subscribe Form */}
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 md:p-12 border border-white/20 max-w-2xl ">
-            <div className="flex flex-col sm:flex-row gap-4 items-stretch">
-              <div className="flex-1 relative">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-0  items-stretch">
+              <div className="flex-1 relative ">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <Input
                   type="email"
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
-                  className="pl-10 h-12 bg-white/90 border-white/20 focus:bg-white transition-all duration-300"
+                  className="pl-10 h-12 bg-white/90 border-white/20  sm:rounded-r-none focus:bg-white transition-all duration-300"
                 />
               </div>
               <Button
                 onClick={() => handelSubScription()}
                 size="lg"
 
-                className="h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-white font-semibold transition-all duration-300 hover:scale-105"
+                className="h-12 px-8 bg-[#D62828] md:rounded-l-none cursor-pointer hover:bg-primary/90 text-white font-semibold transition-all duration-300 hover:scale-105"
               >
                 Subscribe Now
               </Button>
@@ -77,7 +77,7 @@ const Subscribe = () => {
           </div>
 
           {/* Benefits List */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-3xl  mx-auto">
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-3xl  mx-auto">
             <div className="text-center">
               <div className="bg-primary/20 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
                 <span className="text-white font-bold">🎁</span>
@@ -107,7 +107,7 @@ const Subscribe = () => {
                 Invitations to pizza tasting events
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>

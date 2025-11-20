@@ -6,7 +6,7 @@ interface PizzaBuilderPreviewProps {
 }
 
 export function PizzaBuilderPreview({ state }: PizzaBuilderPreviewProps) {
-  const basePrice = 12.99
+  const basePrice = 0
   const sizePrice = state.size?.price || 0
   const crustPrice = state.crust?.price || 0
   const saucePrice = state.sauce?.price || 0

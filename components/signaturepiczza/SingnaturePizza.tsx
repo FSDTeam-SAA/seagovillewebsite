@@ -2,36 +2,38 @@
 
 import React, { useState } from "react";
 import { PizzaCard } from "../shared/pizza-card";
-
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-
 import { useAppDispatch } from "@/lib/store/hooks";
-import { addToCartApi } from "@/lib/store/slices/cardSlice";
 import { MenuItem, Product } from "@/lib/types";
 import { useAllMenuData } from "@/hooks/all-menudata";
-import { addToCart } from "@/lib/api";
+import { useAddToCartMutation } from "@/hooks/use-cart";
+import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Alert,
+  AlertTitle,
+  AlertDescription,
+} from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
 
 const SingnaturePizza = () => {
   const [activeCategory, setActiveCategory] = useState("all");
-  const [selectedSize, setSelectedSize] = useState<
-    "small" | "medium" | "large"
-  >("small");
+  const { mutate: addToCartMutation, isPending } = useAddToCartMutation();
+  const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("small");
   const [selectedPizza, setSelectedPizza] = useState<MenuItem | null>(null);
+  const [dialogType, setDialogType] = useState<"cart" | "order">("cart");
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const [page, setPage] = useState(1);
-  // const limit = 10;
 
-  const { data, isLoading, isError, error } = useAllMenuData(
-    activeCategory,
-    page,
-    // limit
-  );
+  const { data, isLoading, isError, error } = useAllMenuData(activeCategory, page);
 
-  const handleAddToCart = async (
+  const handleAddToCart = (
     pizza: MenuItem,
-    size: "small" | "medium" | "large" = "small"
+    size: "small" | "medium" | "large" = "small",
+    onSuccess?: () => void
   ) => {
     const price = pizza.price[size];
 
@@ -40,38 +42,109 @@ const SingnaturePizza = () => {
       return;
     }
 
-    const cartItem = await addToCart(pizza._id, size);
-
-    if (cartItem) {
-      toast.success("WoW! Successfully added the pizza to your cart");
-    }
-    // Error handling is done in the API function
-  };
-  const handleOpenSizeDialog = (pizza: MenuItem) => {
-    setSelectedPizza(pizza);
-    setSelectedSize("small"); // Reset to default size when opening dialog
-  };
-
-  const handleConfirmAddToCart = () => {
-    if (selectedPizza) {
-      handleAddToCart(selectedPizza, selectedSize);
-      setSelectedPizza(null); // Close dialog after adding
-    }
-  };
-
-  if (isError) {
-    return (
-      <div>
-        <h1>Error</h1>
-      </div>
+    addToCartMutation(
+      { menuId: pizza._id, size },
+      {
+        onSuccess: () => {
+          toast.success("WoW! Successfully added the pizza to your cart");
+          onSuccess?.();
+        },
+        onError: (error) => {
+          toast.error(error?.message || "Failed to add to cart");
+        },
+      }
     );
-  }
+  };
+
+  const handleOpenSizeDialog = (pizza: MenuItem, type: "cart" | "order" = "cart") => {
+    setSelectedPizza(pizza);
+    setSelectedSize("small");
+    setDialogType(type);
+  };
+
+  const handleConfirmAction = () => {
+    if (selectedPizza) {
+      if (dialogType === "order") {
+        // For order: add to cart and then redirect to checkout
+        handleAddToCart(selectedPizza, selectedSize, () => {
+          router.push('/checkout');
+          setSelectedPizza(null);
+        });
+      } else {
+        // For cart: just add to cart
+        handleAddToCart(selectedPizza, selectedSize, () => {
+          setSelectedPizza(null);
+        });
+      }
+    }
+  };
+
+if (isError) {
+  return (
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <Alert>
+        <Card className="w-full">
+          <CardContent className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <AlertTitle className="text-lg">Failed to load pizzas</AlertTitle>
+              <AlertDescription>
+                {error?.message ?? "Something went wrong while fetching the menu. Please try again."}
+              </AlertDescription>
+            </div>
+            <div className="flex gap-2">
+             
+              <Button variant="outline" onClick={() => setActiveCategory("all")}>
+                View All
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </Alert>
+    </div>
+  );
+}
+
+if (isLoading) {
+  // show skeleton grid similar to your final grid layout
+  return (
+    <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-6">
+        {/* category tabs skeleton */}
+        <div className="flex gap-2">
+          <Skeleton className="h-10 w-24 rounded-md" />
+          <Skeleton className="h-10 w-28 rounded-md" />
+          <Skeleton className="h-10 w-20 rounded-md" />
+     
+        </div>
+      </div>
+
+      {/* skeleton grid for pizza cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Card key={i} className="p-4">
+            <div className="flex flex-col gap-4">
+              <Skeleton className="h-44 w-full rounded-md" /> {/* image skeleton */}
+              <div>
+                <Skeleton className="h-6 w-3/4 rounded-md mb-2" /> {/* title skeleton */}
+                <Skeleton className="h-4 w-1/2 rounded-md mb-3" /> {/* subtitle skeleton */}
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-8 w-20 rounded-md" /> {/* price / button skeleton */}
+                  <Skeleton className="h-8 w-20 rounded-md" />
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </section>
+  );
+}
 
   const pizzaData = data?.items;
 
   return (
     <section className="py-20 md:py-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 md:mb-16 lg:mb-20">
           <h2 className="text-2xl md:text-4xl font-bold mb-2 leading-[120%] text-[#343A40] font-lobster">
             Our Signature Pizzas
@@ -88,20 +161,23 @@ const SingnaturePizza = () => {
             <PizzaCard
               key={pizza._id}
               pizza={pizza}
-              onAddToCart={() => handleOpenSizeDialog(pizza)}
+              onAddToCart={() => handleOpenSizeDialog(pizza, "cart")}
+              onOrder={() => handleOpenSizeDialog(pizza, "order")}
               selectedSize={selectedSize}
               onSizeChange={setSelectedSize}
-              onConfirmAddToCart={handleConfirmAddToCart}
+              onConfirmAction={handleConfirmAction}
               isDialogOpen={selectedPizza?._id === pizza._id}
               onCloseDialog={() => setSelectedPizza(null)}
+              dialogType={dialogType}
+              isPending={isPending}
             />
           ))}
         </div>
 
         <div className="text-center mt-12">
           <Link href="/menu">
-            <Button size="lg" variant="outline">
-              View All Pizzas
+            <Button size="lg" variant="outline" className=" border border-[#D62828] rounded-none cursor-pointer">
+              View All Menu
             </Button>
           </Link>
         </div>

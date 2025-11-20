@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { PizzaCard } from "../shared/pizza-card";
 import { toast } from "sonner";
 import { MenuItem } from "@/lib/types";
-import { addToCart } from "@/lib/api";
+import { useAddToCartMutation } from "@/hooks/use-cart";
+import { useRouter } from "next/navigation";
 
 interface SimilarPizzaProps {
   similarPizzas?: MenuItem[];
@@ -13,10 +14,14 @@ interface SimilarPizzaProps {
 export const SimilarPizza = ({ similarPizzas = [] }: SimilarPizzaProps) => {
   const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("small");
   const [selectedPizza, setSelectedPizza] = useState<MenuItem | null>(null);
+  const [dialogType, setDialogType] = useState<"cart" | "order">("cart");
+  const { mutate: addToCartMutation, isPending } = useAddToCartMutation();
+  const router = useRouter();
 
-  const handleAddToCart = async (
+  const handleAddToCart = (
     pizza: MenuItem,
-    size: "small" | "medium" | "large" = "small"
+    size: "small" | "medium" | "large" = "small",
+    onSuccess?: () => void
   ) => {
     const price = pizza.price[size];
 
@@ -25,22 +30,40 @@ export const SimilarPizza = ({ similarPizzas = [] }: SimilarPizzaProps) => {
       return;
     }
 
-    const cartItem = await addToCart(pizza._id, size);
-    
-    if (cartItem) {
-      toast.success("WoW! Successfully added the pizza to your cart");
-    }
+    addToCartMutation(
+      { menuId: pizza._id, size },
+      {
+        onSuccess: () => {
+          toast.success("WoW! Successfully added the pizza to your cart");
+          onSuccess?.();
+        },
+        onError: (error) => {
+          toast.error(error?.message || "Failed to add to cart");
+        },
+      }
+    );
   };
 
-  const handleOpenSizeDialog = (pizza: MenuItem) => {
+  const handleOpenSizeDialog = (pizza: MenuItem, type: "cart" | "order" = "cart") => {
     setSelectedPizza(pizza);
     setSelectedSize("small");
+    setDialogType(type);
   };
 
-  const handleConfirmAddToCart = () => {
+  const handleConfirmAction = () => {
     if (selectedPizza) {
-      handleAddToCart(selectedPizza, selectedSize);
-      setSelectedPizza(null);
+      if (dialogType === "order") {
+        // For order: add to cart and then redirect to checkout
+        handleAddToCart(selectedPizza, selectedSize, () => {
+          router.push('/checkout');
+          setSelectedPizza(null);
+        });
+      } else {
+        // For cart: just add to cart
+        handleAddToCart(selectedPizza, selectedSize, () => {
+          setSelectedPizza(null);
+        });
+      }
     }
   };
 
@@ -68,12 +91,15 @@ export const SimilarPizza = ({ similarPizzas = [] }: SimilarPizzaProps) => {
             <PizzaCard
               key={pizza._id}
               pizza={pizza}
-              onAddToCart={() => handleOpenSizeDialog(pizza)}
+              onAddToCart={() => handleOpenSizeDialog(pizza, "cart")}
+              onOrder={() => handleOpenSizeDialog(pizza, "order")}
               selectedSize={selectedSize}
               onSizeChange={setSelectedSize}
-              onConfirmAddToCart={handleConfirmAddToCart}
+              onConfirmAction={handleConfirmAction}
               isDialogOpen={selectedPizza?._id === pizza._id}
               onCloseDialog={() => setSelectedPizza(null)}
+              dialogType={dialogType}
+              isPending={isPending}
             />
           ))}
         </div>

@@ -181,22 +181,22 @@ const CartItems = () => {
       <div className="flex flex-col min-h-screen bg-background">
         <div className="flex-1 flex items-center justify-center py-20">
           <div className="text-center">
-            <ShoppingCart className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-            <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
+            <ShoppingCart className="w-16 h-16  mx-auto mb-4 text-[#D62828]" />
+            <h1 className="text-3xl font-bold mb-4 font-lobster">Your Cart is Empty</h1>
             <p className="text-muted-foreground mb-8 max-w-md">
               Start building your perfect pizza or browse our menu to get started
             </p>
 
             <div className="flex gap-4 justify-center">
-              <Link href="/menu">
-                <Button variant="outline">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
+              <Link href="/menu" className="">
+                <Button variant="outline" className="border border-[#D62828] cursor-pointer">
+                  <ArrowLeft className="w-4 h-4 mr-2  " />
                   Back to Menu
                 </Button>
               </Link>
 
               <Link href="/builder">
-                <Button className="bg-primary hover:bg-primary/90">
+                <Button className="bg-[#D62828] hover:bg-primary/90 cursor-pointer">
                   Build Pizza
                 </Button>
               </Link>
@@ -274,14 +274,14 @@ const CartItems = () => {
                       <span className="text-muted-foreground">Subtotal</span>
                       <span>${totalPrice.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between text-sm">
+                    {/* <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Tax (8%)</span>
                       <span>${(totalPrice * 0.08).toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
+                    </div> */}
+                    {/* <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Delivery</span>
                       <span>Free</span>
-                    </div>
+                    </div> */}
                   </div>
                   
                   <div className="flex gap-1 my-5">

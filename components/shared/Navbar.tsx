@@ -37,7 +37,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0000003b] backdrop-blur-3xl py-5 text-white">
+    <header className="sticky top-0 z-50 bg-[#0000003b] backdrop-blur-2xl py-5 text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -73,7 +73,7 @@ const Navbar = () => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-4">
-            <div className="relative flex gap-1.5 items-center">
+            {/* <div className="relative flex gap-1.5 items-center">
               {searchinput && (
                 <div className=" ">
                   <SearchButton />
@@ -88,7 +88,7 @@ const Navbar = () => {
               >
                 <Search className="w-5 h-5 cursor-pointer" />
               </Button>
-            </div>
+            </div> */}
 
             <Link href="/cart">
               <Button
@@ -96,9 +96,9 @@ const Navbar = () => {
                 size="icon"
                 className="relative cursor-pointer"
               >
-                <ShoppingCart className="w-5 h-5 md:w-8 md:h-8 " />
+                <ShoppingCart className="w-6 h-6 md:w-8! md:h-8!" />
                 {totalItems > 0 && (
-                  <span className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute top-0 right-0 bg-[#D62828] text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {totalItems}
                   </span>
                 )}

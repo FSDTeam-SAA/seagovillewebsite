@@ -57,7 +57,7 @@ const ServingRating = () => {
           {servicerating.map((value, index) => (
             <article
               key={index}
-              className="shadow-2xl bg-white rounded-xl text-center p-6 hover:shadow-md transition-shadow duration-300"
+              className="shadow-xl bg-white rounded-xl text-center p-6 hover:shadow-md transition-shadow duration-300"
             >
               <div className="text-[30px] md:text-[48px] font-bold flex justify-center items-center gap-3  px-3 tracking-wider leading-[150%] mb-2">
                 <p className="text-[30px] md:text-[48px] text-[#D62828]">
