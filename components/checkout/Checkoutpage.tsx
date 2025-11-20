@@ -92,13 +92,13 @@ export default function CheckoutPage() {
     },
   });
 
-  console.log("payment data", paymentData);
+  // console.log("payment data", paymentData);
 
   // Order mutation
   const ordersMutation = useMutation({
     mutationFn: newOrder,
     onSuccess: (data) => {
-      console.log("Order created successfully:", data);
+      // console.log("Order created successfully:", data);
 
       // Extract order ID from response
       const createdOrderId = data?.data?._id || data?.data?.id;
@@ -172,7 +172,7 @@ export default function CheckoutPage() {
       },
     };
 
-    console.log("Order payload:", orderPayload);
+    // console.log("Order payload:", orderPayload);
     ordersMutation.mutate(orderPayload);
   };
   if (paymentData?.clientSecret) {

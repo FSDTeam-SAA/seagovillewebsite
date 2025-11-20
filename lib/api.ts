@@ -7,7 +7,7 @@ import { CustomizationItem } from "./cusomizetype";
 const api = process.env.NEXT_PUBLIC_API_URL
 
 export async function getFacilities(category: string, page: number) {
-  console.log('test ca',category)
+  // console.log('test ca',category)
   try {
     const queryParams = new URLSearchParams();
 
@@ -401,7 +401,7 @@ export const fetchToppingsCategoryFilter = async (type: string) => {
     }
 
     const data = await res.json();
-    console.log('3', data)
+    // console.log('3', data)
     return data?.data ?? [];
   } catch (error) {
     console.error("Error fetching toppings:", error);
@@ -464,7 +464,7 @@ export async function createContact({
       body: JSON.stringify(requestBody)
     });
 
-    console.log('Response status:', res.status);
+    // console.log('Response status:', res.status);
 
 
     if (!res.ok) {
@@ -480,11 +480,11 @@ export async function createContact({
     }
 
     const data = await res.json();
-    console.log('Success response:', data);
+    // console.log('Success response:', data);
 
     return data;
   } catch (error) {
-    console.error('Fetch error:', error);
+    // console.error('Fetch error:', error);
     if (error instanceof Error) {
       throw new Error(error.message);
     }

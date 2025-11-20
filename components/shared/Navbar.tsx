@@ -21,7 +21,7 @@ const Navbar = () => {
     queryFn:()=>getCartItems()
   })
 
-  console.log('cart data',cart)
+  // console.log('cart data',cart)
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -31,7 +31,7 @@ const Navbar = () => {
     { name: "Contact", href: "/contact" },
   ];
   const totalItems = cart?.length || 0;
- console.log('cart data in navbar',totalItems ,'and also dat',cart)
+//  console.log('cart data in navbar',totalItems ,'and also dat',cart)
   const handelSearch = () => {
     setSearchInput(!searchinput);
   };

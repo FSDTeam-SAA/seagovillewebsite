@@ -39,7 +39,7 @@ export default function PizzaBuilderPage() {
   const { sizes, crusts, sauces, cheeses, loading, error } =
     useCustomizationData();
 
-  console.log("state data ", state);
+  // console.log("state data ", state);
 
   // Fetch topping categories
   const { data: toppingCategoriesData } = useQuery({
@@ -82,8 +82,8 @@ export default function PizzaBuilderPage() {
     },
     onSuccess: (data) => {
       setOrderId(data?.data?._id);
-      console.log("custorm order data", data?.data?._id);
-      console.log("custorm order data 2", data);
+      // console.log("custorm order data", data?.data?._id);
+      // console.log("custorm order data 2", data);
     },
   });
 
