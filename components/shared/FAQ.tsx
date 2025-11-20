@@ -50,7 +50,7 @@ const FAQ = () => {
   };
 
   return (
-    <section className="w-full py-16 md:py-24 lg:py-32 bg-background">
+    <section id="faq" className="w-full py-16 md:py-24 lg:py-32 bg-background">
       <div className="container px-4 md:px-6 mx-auto">
         {/* Header Section */}
         <div className="text-center  mx-auto mb-16">
@@ -58,7 +58,7 @@ const FAQ = () => {
             {" "}
             🤔 FAQs
           </p>
-          <h2 className="text-xl md:text-[32px] text-secondary font-bold tracking-tight mb-4">
+          <h2 className="text-xl md:text-[32px] text-secondary font-bold tracking-tight mb-4 font-lobster">
             Frequently asked questions
           </h2>
           <p className="text-xs md:text-sm text-gray ">
@@ -97,7 +97,7 @@ const FAQ = () => {
         </div>
 
         {/* Additional Help Section */}
-        <div className="text-center mt-16 max-w-2xl mx-auto">
+        {/* <div className="text-center mt-16 max-w-2xl mx-auto">
           <p className="text-muted-foreground mb-6">
             Still have questions? We&apos;re here to help.
           </p>
@@ -109,7 +109,7 @@ const FAQ = () => {
               Schedule a Call
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

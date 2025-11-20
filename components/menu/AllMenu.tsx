@@ -1,22 +1,26 @@
 "use client";
 import React, { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/lib/store/hooks";
-import {  addToCartApi } from "@/lib/store/slices/cardSlice";
 import { useAllMenuData } from "@/hooks/all-menudata";
 import { MenuItem, Product } from "@/lib/types";
 import { PizzaFilterTabs } from "../pizza/pizza-filter-tabs";
 import { PizzaCard } from "../shared/pizza-card";
 import { Button } from "../ui/button";
-import { addToCart } from "@/lib/api";
+import { useAddToCartMutation } from "@/hooks/use-cart";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const AllMenu = () => {
   const [activeCategory, setActiveCategory] = useState("all");
+  const { mutate: addToCartMutation, isPending } = useAddToCartMutation();
   const [selectedSize, setSelectedSize] = useState<
     "small" | "medium" | "large"
   >("small");
   const [selectedPizza, setSelectedPizza] = useState<MenuItem | null>(null);
+  const [dialogType, setDialogType] = useState<"cart" | "order">("cart");
+  const route = useRouter();
   const dispatch = useAppDispatch();
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -24,38 +28,57 @@ const AllMenu = () => {
   const { data, isLoading, isError, error } = useAllMenuData(
     activeCategory,
     page
-    
   );
 
+  const handleAddToCart = (
+    pizza: MenuItem,
+    size: "small" | "medium" | "large" = "small",
+    onSuccess?: () => void
+  ) => {
+    const price = pizza.price[size];
 
+    if (!price) {
+      toast.error("Selected size is not available for this pizza");
+      return;
+    }
 
-const handleAddToCart = async (
-  pizza: MenuItem,
-  size: "small" | "medium" | "large" = "small"
-) => {
-  const price = pizza.price[size];
-
-  if (!price) {
-    toast.error("Selected size is not available for this pizza");
-    return;
-  }
-
-  const cartItem = await addToCart(pizza._id, size);
-  
-  if (cartItem) {
-    toast.success("WoW! Successfully added the pizza to your cart");
-  }
-  // Error handling is done in the API function
-};
-  const handleOpenSizeDialog = (pizza: MenuItem) => {
-    setSelectedPizza(pizza);
-    setSelectedSize("small"); 
+    addToCartMutation(
+      { menuId: pizza._id, size },
+      {
+        onSuccess: () => {
+          toast.success("WoW! Successfully added the pizza to your cart");
+          onSuccess?.();
+        },
+        onError: (error) => {
+          toast.error(error?.message || "Failed to add to cart");
+        },
+      }
+    );
   };
 
-  const handleConfirmAddToCart = () => {
+  const handleOpenSizeDialog = (
+    pizza: MenuItem,
+    type: "cart" | "order" = "cart"
+  ) => {
+    setSelectedPizza(pizza);
+    setSelectedSize("small");
+    setDialogType(type);
+  };
+
+  const handleConfirmAction = () => {
     if (selectedPizza) {
-      handleAddToCart(selectedPizza, selectedSize);
-      setSelectedPizza(null); 
+      if (dialogType === "order") {
+        // For order: add to cart and then redirect to checkout
+        handleAddToCart(selectedPizza, selectedSize, () => {
+          route.push("/checkout");
+          setSelectedPizza(null);
+        });
+      } else {
+        // For cart: just add to cart
+        handleAddToCart(selectedPizza, selectedSize, () => {
+          setSelectedPizza(null);
+        });
+      }
     }
   };
 
@@ -99,12 +122,15 @@ const handleAddToCart = async (
                     <PizzaCard
                       key={pizza._id}
                       pizza={pizza}
-                      onAddToCart={() => handleOpenSizeDialog(pizza)}
+                      onAddToCart={() => handleOpenSizeDialog(pizza, "cart")}
+                      onOrder={() => handleOpenSizeDialog(pizza, "order")}
                       selectedSize={selectedSize}
                       onSizeChange={setSelectedSize}
-                      onConfirmAddToCart={handleConfirmAddToCart}
+                      onConfirmAction={handleConfirmAction}
                       isDialogOpen={selectedPizza?._id === pizza._id}
                       onCloseDialog={() => setSelectedPizza(null)}
+                      dialogType={dialogType}
+                      isPending={isPending}
                     />
                   ))}
                 </div>
@@ -130,19 +156,42 @@ const handleAddToCart = async (
               <Button
                 disabled={page === 1}
                 onClick={() => setPage((p) => p - 1)}
+                className="bg-transparent text-red-500  hover:bg-gray-300  cursor-pointer"
               >
-                Previous
+                <ChevronLeft className="w-10! h-10! " />
               </Button>
 
-              <span>
-                Page {data?.meta?.page} of {data?.meta?.totalPages}
+              <span className="flex items-center gap-2">
+                {Array.from({ length: data?.meta?.totalPages || 0 }).map(
+                  (_, index) => {
+                    const pageNumber = index + 1;
+                    const isActive = pageNumber === page;
+
+                    return (
+                      <div key={index}>
+                        {isActive ? (
+                          <Image
+                            src="/pagination.png"
+                            width={20}
+                            height={20}
+                            alt="active-page"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-2 h-2 rounded-full bg-gray-400"></div>
+                        )}
+                      </div>
+                    );
+                  }
+                )}
               </span>
 
               <Button
                 disabled={page >= (data?.meta?.totalPages || 1)}
                 onClick={() => setPage((p) => p + 1)}
+                className="bg-transparent text-red-500  hover:bg-gray-300 cursor-pointer"
               >
-                Next
+                <ChevronRight className="w-10! h-10!"/>
               </Button>
             </div>
           ) : (

@@ -44,10 +44,10 @@ interface OrderItem {
 export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [orderId, setOrderId] = useState<string>('');
+  const [orderId, setOrderId] = useState<string>("");
   const searchParams = useSearchParams();
-  const [promoCode, setPromoCode] = useState('');
-  const [paymentData,setPyementData]=useState<PaymentData |null>(null)
+  const [promoCode, setPromoCode] = useState("");
+  const [paymentData, setPyementData] = useState<PaymentData | null>(null);
   const [formData, setFormData] = useState<DeliveryDetails>({
     fullName: "",
     email: "",
@@ -59,15 +59,15 @@ export default function CheckoutPage() {
   });
 
   useEffect(() => {
-    const couponCode = searchParams.get('couponCode');
+    const couponCode = searchParams.get("couponCode");
     if (couponCode) {
       setPromoCode(couponCode);
     }
   }, []);
 
   const { data: cart = [] } = useQuery({
-    queryKey: ['cart'],
-    queryFn: () => getCartItems()
+    queryKey: ["cart"],
+    queryFn: () => getCartItems(),
   });
 
   const { orderData } = useCart();
@@ -81,31 +81,31 @@ export default function CheckoutPage() {
       setPyementData({
         clientSecret: data?.data?.clientSecret,
         paymentId: data?.data?.paymentId,
-      })
-      
+      });
+
       // i want to this filed use stripe my clientsecrect and paymentorderid in here: paymentData
       setOrderPlaced(true);
     },
     onError: (error: Error) => {
       setLoading(false);
       toast.error(error.message || "Payment failed");
-    }
+    },
   });
 
-  console.log('payment data',paymentData)
+  console.log("payment data", paymentData);
 
   // Order mutation
   const ordersMutation = useMutation({
     mutationFn: newOrder,
     onSuccess: (data) => {
-      console.log('Order created successfully:', data);
-      
+      console.log("Order created successfully:", data);
+
       // Extract order ID from response
       const createdOrderId = data?.data?._id || data?.data?.id;
-      
+
       if (createdOrderId) {
         setOrderId(createdOrderId);
-        
+
         // Process payment after order is created
         paymentMutation.mutate(createdOrderId);
       } else {
@@ -116,11 +116,14 @@ export default function CheckoutPage() {
     onError: (error: Error) => {
       setLoading(false);
       toast.error(error.message || "Failed to place order");
-    }
+    },
   });
 
   // Calculate total from cart items
-  const total = cart.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0);
+  const total = cart.reduce(
+    (sum: number, item: any) => sum + (item.totalPrice || 0),
+    0
+  );
 
   if (cart.length === 0) {
     return (
@@ -152,32 +155,37 @@ export default function CheckoutPage() {
     const orderPayload = {
       type: "multi",
       ...(promoCode && { couponCode: promoCode }),
-      cart: orderData.length > 0 ? orderData : cart.map((item: any) => ({
-        cartId: item._id,
-        quantity: item.quantity,
-        totalPrice: item.totalPrice
-      })),
+      cart:
+        orderData.length > 0
+          ? orderData
+          : cart.map((item: any) => ({
+              cartId: item._id,
+              quantity: item.quantity,
+              totalPrice: item.totalPrice,
+            })),
       deliveryDetails: {
         fullName: formData.fullName,
         email: formData.email,
         address: formData.address,
         phone: formData.phone,
-        note: formData.note
-      }
+        note: formData.note,
+      },
     };
 
-    console.log('Order payload:', orderPayload);
+    console.log("Order payload:", orderPayload);
     ordersMutation.mutate(orderPayload);
   };
-   if (paymentData?.clientSecret) {
-        return (
-          <div className="max-w-lg mx-auto mt-20">
-            <h1 className="text-2xl font-bold mb-4 text-center">Complete Payment</h1>
+  if (paymentData?.clientSecret) {
+    return (
+      <div className="max-w-lg mx-auto mt-20">
+        <h1 className="text-2xl font-bold mb-4 text-center">
+          Complete Payment
+        </h1>
 
-            <StripePayment clientSecret={paymentData.clientSecret} />
-          </div>
-        );
-      }
+        <StripePayment clientSecret={paymentData.clientSecret} />
+      </div>
+    );
+  }
   // if (orderPlaced) {
   //   return (
   //     <div className="flex flex-col min-h-screen bg-background">
@@ -368,9 +376,13 @@ export default function CheckoutPage() {
                 {/* Promo Code Display */}
                 {promoCode && (
                   <div className="bg-card border border-border rounded-lg p-6">
-                    <h2 className="text-xl font-bold mb-4">Promo Code Applied</h2>
+                    <h2 className="text-xl font-bold mb-4">
+                      Promo Code Applied
+                    </h2>
                     <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <span className="text-green-700 font-medium">{promoCode}</span>
+                      <span className="text-green-700 font-medium">
+                        {promoCode}
+                      </span>
                       <span className="text-green-600">✓ Applied</span>
                     </div>
                   </div>
@@ -379,12 +391,18 @@ export default function CheckoutPage() {
                 {/* Submit */}
                 <Button
                   type="submit"
-                  disabled={loading || ordersMutation.isPending || paymentMutation.isPending}
+                  disabled={
+                    loading ||
+                    ordersMutation.isPending ||
+                    paymentMutation.isPending
+                  }
                   size="lg"
                   className="w-full bg-[#D62828] cursor-pointer hover:bg-[#ff7878]"
                 >
-                  {loading || ordersMutation.isPending || paymentMutation.isPending 
-                    ? "Processing..." 
+                  {loading ||
+                  ordersMutation.isPending ||
+                  paymentMutation.isPending
+                    ? "Processing..."
                     : "Place Order"}
                 </Button>
               </form>
@@ -397,10 +415,15 @@ export default function CheckoutPage() {
 
                 <div className="space-y-3 mb-6 pb-6 border-b border-border max-h-64 overflow-y-auto">
                   {cart.map((item: any) => (
-                    <div key={item._id} className="flex justify-between text-sm">
+                    <div
+                      key={item._id}
+                      className="flex justify-between text-sm"
+                    >
                       <div>
                         <span className="font-medium">
-                          {item.type === 'menu' && item.menu ? item.menu.menuId.name : 'Custom Pizza'}
+                          {item.type === "menu" && item.menu
+                            ? item.menu.menuId.name
+                            : "Custom Pizza"}
                         </span>
                         <span className="text-muted-foreground ml-2">
                           x{item.quantity}
@@ -413,34 +436,36 @@ export default function CheckoutPage() {
                   ))}
                 </div>
 
-                <div className="space-y-3 mb-6 pb-6 border-b border-border">
-                  <div className="flex justify-between text-sm">
+                <div className=" border-border">
+                  {/* <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
                     <span>${total.toFixed(2)}</span>
-                  </div>
-                  
-                  {promoCode && (
+                  </div> */}
+
+                  {/* {promoCode && (
                     <div className="flex justify-between text-sm text-green-600">
                       <span>Promo Code ({promoCode})</span>
                       <span>-${(total * 0.05).toFixed(2)}</span>
                     </div>
-                  )}
+                  )} */}
 
-                  <div className="flex justify-between text-sm">
+                  {/* <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Tax (8%)</span>
                     <span>${(total * 0.08).toFixed(2)}</span>
-                  </div>
-                  
-                  <div className="flex justify-between text-sm">
+                  </div> */}
+
+                  {/* <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Delivery</span>
                     <span>Free</span>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="font-bold">Total</span>
-                  <span className="text-2xl font-bold text-primary">
-                    ${(total + (total * 0.08)).toFixed(2)}
+                  <span className="font-bold bg-gradient-to-r from-[#FB2C36] to-[#F6339A] bg-clip-text text-transparent">
+                    Total
+                  </span>
+                  <span className="text-2xl font-bold bg-gradient-to-r from-[#FB2C36] to-[#F6339A] bg-clip-text text-transparent">
+                    ${total.toFixed(2)}
                   </span>
                 </div>
               </div>

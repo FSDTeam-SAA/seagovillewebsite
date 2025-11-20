@@ -1,5 +1,5 @@
 "use client";
-import { Star, ShoppingCart } from "lucide-react";
+import { Star, ShoppingCart, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types";
 import Image from "next/image";
@@ -9,21 +9,27 @@ import Link from "next/link";
 interface PizzaCardProps {
   pizza: Product;
   onAddToCart?: () => void;
+  onOrder?: () => void;
   selectedSize?: 'small' | 'medium' | 'large';
   onSizeChange?: (size: 'small' | 'medium' | 'large') => void;
-  onConfirmAddToCart?: () => void;
+  onConfirmAction?: () => void;
   isDialogOpen?: boolean;
   onCloseDialog?: () => void;
+  dialogType?: 'cart' | 'order';
+  isPending?: boolean;
 }
 
 export function PizzaCard({ 
   pizza, 
   onAddToCart, 
+  onOrder,
   selectedSize = 'small', 
   onSizeChange,
-  onConfirmAddToCart,
+  onConfirmAction,
   isDialogOpen = false,
-  onCloseDialog
+  onCloseDialog,
+  dialogType = 'cart',
+  isPending = false
 }: PizzaCardProps) {
   
   const imageUrl = pizza.images?.[0]?.url || "/placeholder.svg";
@@ -37,37 +43,67 @@ export function PizzaCard({
     return pizza.price[selectedSize] || smallPrice;
   };
 
+  const handleOrderNowClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onOrder?.();
+  };
+
+  const handleAddToCartClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onAddToCart?.();
+  };
+
+  const getDialogTitle = () => {
+    return dialogType === 'cart' 
+      ? "Select size for adding to cart" 
+      : "Select size for ordering";
+  };
+
+  const getActionButtonText = () => {
+    const price = pizza.price[selectedSize]?.toFixed(2);
+    if (dialogType === 'cart') {
+      return `Add to Cart - $${price}`;
+    } else {
+      return `Order Now - $${price}`;
+    }
+  };
+
+  const getActionButtonIcon = () => {
+    return dialogType === 'cart' ? <ShoppingCart className="w-4 h-4 mr-2" /> : null;
+  };
+
   return (
     <>
       <div className="bg-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
         <Link href={`/menu/${pizza._id}`}>
-        
-        <div className="relative aspect-square bg-muted overflow-hidden">
-          <Image
-            src={imageUrl}
-            alt={pizza.name}
-            width={496}
-            height={464}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-          />
-        </div>
+          <div className="relative aspect-square bg-muted overflow-hidden">
+            <Image
+              src={imageUrl}
+              alt={pizza.name}
+              width={496}
+              height={464}
+              className="w-full h-full object-cover  hover:scale-105 transition-transform duration-300"
+            />
+          </div>
         </Link>
         
         <div className="p-4">
-        <Link href={`/menu/${pizza._id}`}>
-          <h3 className="font-semibold text-base md:text-xl leading-[150%] mb-1 line-clamp-1">
-            {pizza.name}
-          </h3>
+          <Link href={`/menu/${pizza._id}`}>
+            <h3 className="font-semibold text-base md:text-xl leading-[150%] mb-1 line-clamp-1">
+              {pizza.name}
+            </h3>
 
-          <p className="text-sm md:text-base text-[#6C757D] mb-6 md:mb-10 line-clamp-2">
-            {pizza.description}
-          </p>
-        </Link>
+            <p className="text-sm md:text-base text-[#6C757D] mb-6 md:mb-10 line-clamp-2">
+              {pizza.description}
+            </p>
+          </Link>
 
           <div className="flex items-center justify-between">
-            <span className="flex gap-2 items-center text-base md:text-2xl font-bold text-[#D62828] leading-[150%]">
+            <span className="flex gap-2 items-center text-base lg:text-2xl font-bold text-[#D62828] leading-[150%]">
               ${getCurrentPrice().toFixed(2)}
-              <span className="text-[#6C757D] line-through text-xs md:text-sm">
+              <span className="text-[#6C757D] line-through text-xs lg:text-sm">
                 ${(getCurrentPrice() + 5).toFixed(2)}
               </span>
             </span>
@@ -75,13 +111,16 @@ export function PizzaCard({
             <div className="flex items-center gap-2">
               <Button
                 size="sm"
-                onClick={onAddToCart}
-                className="bg-transparent cursor-pointer border border-[#D62828] hover:bg-primary/90"
+                onClick={handleAddToCartClick}
+                className="bg-transparent rounded-none cursor-pointer border hover:text-white border-[#D62828] hover:bg-red-200 "
               >
-                <ShoppingCart className="w-4 h-4 text-[#D62828]" />
+                <ShoppingCart className="w-4 h-4 text-[#D62828] " />
               </Button>
 
-              <Button className="bg-[#D62828] cursor-pointer text-sm md:text-base leading-[150%] text-[#F8F9FA]">
+              <Button 
+                onClick={handleOrderNowClick}
+                className="bg-[#D62828] hover:bg-red-500 rounded-none cursor-pointer text-sm lg:text-base leading-[150%] text-[#F8F9FA]"
+              >
                 Order Now
               </Button>
             </div>
@@ -93,7 +132,7 @@ export function PizzaCard({
       <Dialog open={isDialogOpen} onOpenChange={onCloseDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Select What size you Want</DialogTitle>
+            <DialogTitle>{getDialogTitle()}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div 
@@ -132,14 +171,19 @@ export function PizzaCard({
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" className="cursor-pointer">Cancel</Button>
             </DialogClose>
             <Button 
-              onClick={onConfirmAddToCart}
-              className="bg-[#D62828] hover:bg-[#b51e1e] text-white"
+              onClick={onConfirmAction}
+              disabled={isPending}
+              className="bg-[#D62828] hover:bg-[#b51e1e] cursor-pointer text-white"
             >
-              <ShoppingCart className="w-4 h-4 mr-2" />
-              Add to Cart - ${pizza.price[selectedSize]?.toFixed(2)}
+              {isPending ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                getActionButtonIcon()
+              )}
+              {isPending ? "Processing..." : getActionButtonText()}
             </Button>
           </DialogFooter>
         </DialogContent>
