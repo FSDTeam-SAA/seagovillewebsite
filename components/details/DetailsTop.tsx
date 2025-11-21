@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
-import { addToCart } from "@/lib/api";
 import { MenuResponse } from "@/lib/detailstype";
- 
+import { MenuItem } from "@/lib/types";
+import { useAddToCartMutation } from "@/hooks/use-cart";
+// import { Toaster } from "sonner";
 
 interface SizeOption {
   size: string;
@@ -15,17 +16,18 @@ interface SizeOption {
   key: "small" | "medium" | "large";
 }
 
+
 export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
+  const { mutate: addToCartMutation } = useAddToCartMutation();
   const singlePizza = pizza?.data;
   const [selectedSize, setSelectedSize] = useState<
     "small" | "medium" | "large"
   >("small");
-  // console.log('imagess',singlePizza.images)
+
   const [mainImage, setMainImage] = useState(
     singlePizza?.images[0]?.url || "/detail2.jpg"
   );
 
-  // Use actual pizza data for size options
   const sizeOptions: SizeOption[] = [
     {
       size: "Small Size",
@@ -47,7 +49,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
     },
   ];
 
-  // Use actual ingredients if available, otherwise fallback
+
   const ingredients =
     singlePizza.ingredients && singlePizza.ingredients.length > 0
       ? singlePizza.ingredients
@@ -66,22 +68,30 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
       ? singlePizza.images.map((img) => img.url)
       : [singlePizza.images[0]?.url || "/placeholder.svg"];
 
-  const selectedSizeData =
-    sizeOptions.find((option) => option.key === selectedSize) || sizeOptions[0];
-
-  const handleAddToCart = async () => {
-    const price = singlePizza.price[selectedSize];
+  const handleAddToCart = (
+    pizza: MenuItem,
+    size: "small" | "medium" | "large" = "small",
+    onSuccess?: () => void
+  ) => {
+    const price = pizza.price[size];
 
     if (!price) {
       toast.error("Selected size is not available for this pizza");
       return;
     }
 
-    const cartItem = await addToCart(singlePizza._id, selectedSize);
-
-    if (cartItem) {
-      toast.success("WoW! Successfully added the pizza to your cart");
-    }
+    addToCartMutation(
+      { menuId: pizza._id, size },
+      {
+        onSuccess: () => {
+          toast.success("WoW! Successfully added the pizza to your cart");
+          onSuccess?.();
+        },
+        onError: (error) => {
+          toast.error(error?.message || "Failed to add to cart");
+        },
+      }
+    );
   };
 
   // const handleOrderNow = () => {
@@ -90,7 +100,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
   // };
 
   return (
-    <section className="py-12 bg-gradient-to-b from-white to-orange-50">
+    <section className="py-12  from-white to-orange-50">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Left: Pizza Image */}
@@ -112,7 +122,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
                 {images.map((img, i) => (
                   <button
                     key={i}
-                    className={`relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-colors ${
+                    className={`relative w-20 h-20 rounded-lg overflow-hidden shrink-0 border-2 transition-colors ${
                       mainImage === img
                         ? "border-red-500"
                         : "border-transparent"
@@ -208,7 +218,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
 
             {/* Availability */}
             <div
-              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+              className={`inline-flex items-center px-3 py-1 w-21 rounded-full text-sm font-medium ${
                 singlePizza.isAvailable
                   ? "bg-green-100 text-green-800"
                   : "bg-red-100 text-red-800"
@@ -220,7 +230,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
               <button
-                onClick={handleAddToCart}
+                onClick={() => handleAddToCart(singlePizza!, selectedSize)} // Here we call handleAddToCart
                 disabled={!singlePizza.isAvailable}
                 className="flex-1 cursor-pointer bg-white hover:bg-gray-50 text-red-600 border border-red-600 font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >

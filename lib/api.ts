@@ -1,10 +1,8 @@
-
-import { CartItem, MenuItem } from "@/lib/types";
+import { CartItem } from "@/lib/types";
 import { toast } from "sonner";
 import { CustomizationItem } from "./cusomizetype";
 
-
-const api = process.env.NEXT_PUBLIC_API_URL
+const api = process.env.NEXT_PUBLIC_API_URL;
 
 export async function getFacilities(category: string, page: number) {
   // console.log('test ca',category)
@@ -35,21 +33,17 @@ export async function getFacilities(category: string, page: number) {
   }
 }
 export async function getallDataForCatagory() {
- 
   try {
-    
     const res = await fetch(`${api}/menu/all-menus`);
     const data = await res.json();
 
     return {
       items: data?.data ?? [],
-     
     };
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Error fetching menus: ${error.message}`);
     }
-
   }
 }
 export async function fetchPizzaById(id: string) {
@@ -68,7 +62,6 @@ export async function fetchPizzaById(id: string) {
 
     const data = await res.json();
 
-
     return data || null;
   } catch (error) {
     console.error("Error fetching pizza:", error);
@@ -77,24 +70,22 @@ export async function fetchPizzaById(id: string) {
   }
 }
 
-
 // review
 export async function getAllReview() {
   try {
     const res = await fetch(`${api}/review`, {
       method: "GET",
       headers: {
-        "content-Type": "application/json"
-      }
-    })
+        "content-Type": "application/json",
+      },
+    });
     const data = res.json();
     return data;
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`${error.message}`)
+      throw new Error(`${error.message}`);
     }
   }
-
 }
 
 export async function createReview(data: {
@@ -125,11 +116,7 @@ export async function createReview(data: {
   }
 }
 
-
 //cart all api
-
-
-
 
 // Get cart items
 export const getCartItems = async () => {
@@ -155,9 +142,12 @@ export const getCartItems = async () => {
 };
 
 // Add item to cart
-export const addToCart = async (menuId: string, types: "small" | "medium" | "large"): Promise<CartItem | null> => {
+export const addToCart = async (
+  menuId: string,
+  types: "small" | "medium" | "large"
+): Promise<CartItem | null> => {
   try {
-    const type = 'menu';
+    const type = "menu";
     const res = await fetch(`${api}/add-cart/add-to-cart`, {
       method: "POST",
       headers: {
@@ -165,7 +155,7 @@ export const addToCart = async (menuId: string, types: "small" | "medium" | "lar
       },
       body: JSON.stringify({
         menu: { menuId, types },
-        type
+        type,
       }),
     });
 
@@ -175,11 +165,14 @@ export const addToCart = async (menuId: string, types: "small" | "medium" | "lar
     }
 
     const data = await res.json();
+    // console.log(data);
     // toast.success("Added to cart successfully!");
     return data.item;
   } catch (error) {
     console.error("Error adding to cart:", error);
-    toast.error(error instanceof Error ? error.message : "Failed to add to cart");
+    toast.error(
+      error instanceof Error ? error.message : "Failed to add to cart"
+    );
     return null;
   }
 };
@@ -224,7 +217,7 @@ export const CustomaddToCart = async (ownPizzaId: string) => {
       },
       body: JSON.stringify({
         ownPizzaId,
-        type: "ownPizza"
+        type: "ownPizza",
       }),
     });
 
@@ -242,7 +235,9 @@ export const CustomaddToCart = async (ownPizzaId: string) => {
 };
 
 // Increment item quantity
-export const incrementCartItem = async (itemId: string): Promise<CartItem | null> => {
+export const incrementCartItem = async (
+  itemId: string
+): Promise<CartItem | null> => {
   try {
     const res = await fetch(`${api}/add-cart/increment/${itemId}`, {
       method: "PUT",
@@ -265,7 +260,9 @@ export const incrementCartItem = async (itemId: string): Promise<CartItem | null
 };
 
 // Decrement item quantity
-export const decrementCartItem = async (itemId: string): Promise<CartItem | null> => {
+export const decrementCartItem = async (
+  itemId: string
+): Promise<CartItem | null> => {
   try {
     const res = await fetch(`${api}/add-cart/decrement/${itemId}`, {
       method: "PUT",
@@ -330,12 +327,11 @@ export const removeCartItem = async (itemId: string): Promise<boolean> => {
 //   }
 // };
 
+//customize
 
-
-//customize 
-
-
-export const fetchCustomizationData = async (category: string): Promise<CustomizationItem[]> => {
+export const fetchCustomizationData = async (
+  category: string
+): Promise<CustomizationItem[]> => {
   try {
     const res = await fetch(`${api}/toppings?category=${category}`, {
       method: "GET",
@@ -362,7 +358,6 @@ export const fetchSauces = () => fetchCustomizationData("sauce");
 export const fetchCheeses = () => fetchCustomizationData("cheese");
 export const fetchToppings = () => fetchCustomizationData("topping");
 
-
 export const fetchToppingsCatagory = async () => {
   try {
     const res = await fetch(`${api}/toppings?category=toppings`, {
@@ -371,7 +366,7 @@ export const fetchToppingsCatagory = async () => {
         "Content-Type": "application/json",
       },
     });
-    console.log('1', res)
+    console.log("1", res);
     if (!res.ok) {
       throw new Error(`Failed to fetch `);
     }
@@ -409,36 +404,34 @@ export const fetchToppingsCategoryFilter = async (type: string) => {
   }
 };
 
-
-
 //subscription
 
 export async function subscription(email: string) {
   try {
     const res = await fetch(`${api}/subscription/new-subscription`, {
-      method: 'POST',
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email })
-    })
-    const data = res.json()
+      body: JSON.stringify({ email }),
+    });
+    const data = res.json();
     return data;
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`${error}`)
+      throw new Error(`${error}`);
     }
   }
 }
 
-//contact 
+//contact
 
 export async function createContact({
   firstName,
   lastName,
   email,
   phone,
-  message
+  message,
 }: {
   firstName: string;
   lastName: string;
@@ -452,20 +445,19 @@ export async function createContact({
       lastName,
       email,
       phone,
-      message
+      message,
     };
 
-    console.log('Sending request body:', requestBody);
+    // console.log("Sending request body:", requestBody);
     const res = await fetch(`${api}/contact/send-message`, {
       method: "POST",
       headers: {
-        'Content-Type': "application/json",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify(requestBody),
     });
 
     // console.log('Response status:', res.status);
-
 
     if (!res.ok) {
       let errorMessage = `Request failed with status ${res.status}`;
@@ -473,7 +465,6 @@ export async function createContact({
         const errorData = await res.json();
         errorMessage = errorData.message || errorMessage;
       } catch {
-
         errorMessage = res.statusText || errorMessage;
       }
       throw new Error(errorMessage);
@@ -488,31 +479,28 @@ export async function createContact({
     if (error instanceof Error) {
       throw new Error(error.message);
     }
-    throw new Error('An unknown error occurred');
+    throw new Error("An unknown error occurred");
   }
 }
 
-
-// copincode 
+// copincode
 
 export async function getCopons() {
   try {
     const res = await fetch(`${api}/coupons`, {
       method: "POST",
       headers: {
-        "Content-Type": "aplication/json"
-      }
-    })
-    const data = res.json()
-    return  data;
+        "Content-Type": "aplication/json",
+      },
+    });
+    const data = res.json();
+    return data;
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`${error}`)
+      throw new Error(`${error}`);
     }
   }
-
 }
-
 
 // order
 
@@ -557,7 +545,7 @@ export async function newOrder(orderData: NewOrderPayload) {
   }
 }
 
-//payment  
+//payment
 export async function payment(orderId: string) {
   try {
     const res = await fetch(`${api}/payment/new-payment`, {
@@ -581,28 +569,24 @@ export async function payment(orderId: string) {
   }
 }
 
-
-// cupone 
+// cupone
 
 export async function getCupone() {
   try {
     const res = await fetch(`${api}/coupons`, {
       method: "GET",
       headers: {
-        'Content-Type': "aplication/json",
+        "Content-Type": "aplication/json",
       },
-
-    })
+    });
     const data = await res.json();
     return data?.data;
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`${error}`)
+      throw new Error(`${error}`);
     }
   }
-
 }
-
 
 // export async function claimCoupan(data) {
 //   try {

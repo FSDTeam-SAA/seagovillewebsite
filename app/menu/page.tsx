@@ -1,11 +1,3 @@
-/**
- * Menu page - Browse all pizzas with filtering and TanStack Query
- */
-
-import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
-
 import MenuHero from "@/components/menu/MenuHero";
 import AllMenu from "@/components/menu/AllMenu";
 

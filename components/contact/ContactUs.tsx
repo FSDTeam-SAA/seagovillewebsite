@@ -6,24 +6,26 @@ const ContactUs = () => {
     {
       icon: Mail,
       title: "Email",
-      link: "mailto:useremail@gmail.com",
-      value: "useremail@gmail.com",
+      link: "mailto:cravingpizzaseagoville@gmail.com",
+      value: "cravingpizzaseagoville@gmail.com",
       description:
         "We believe in the power of teamwork and building strong partnerships.",
     },
     {
       icon: Locate,
       title: "Office",
-      link: "https://maps.google.com/?q=Seagoville, New York",
-      value: "Seagoville, New York",
+      link: `https://maps.google.com/?q=${encodeURIComponent(
+        "208 Hall Road Seagoville Texas 75159"
+      )}`,
+      value: "208 Hall Road Seagoville Texas 75159",
       description:
         "We strive for the highest quality in everything we deliver to our clients.",
     },
     {
       icon: Phone,
       title: "Phone",
-      link: "tel:+01923846389722",
-      value: "+01923846389722",
+      link: "tel:469-848-6300",
+      value: " 469-848-6300",
       description:
         "We continuously seek new and better ways to solve problems and create value.",
     },

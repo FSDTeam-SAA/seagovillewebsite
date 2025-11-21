@@ -85,15 +85,15 @@ export const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li className="flex gap-2">
                 <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
-                <span className="text-gray-700">123 Main Street, Seagoville, TX 75159</span>
+                <span className="text-gray-700">208 Hall Road Seagoville Texas 75159</span>
               </li>
               <li className="flex gap-2">
                 <Phone className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
-                <span className="text-gray-700">Phone: (972) 555-PIZZA</span>
+                <span className="text-gray-700">Phone: 469-848-6300</span>
               </li>
               <li className="flex gap-2">
                 <Mail className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
-                <span className="text-gray-700">info@seagovillepizza.com</span>
+                <span className="text-gray-700">cravingpizzaseagoville@gmail.com</span>
               </li>
             </ul>
           </div>
