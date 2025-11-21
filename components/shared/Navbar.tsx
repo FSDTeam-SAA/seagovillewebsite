@@ -2,39 +2,36 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { Menu, Search, ShoppingCart } from "lucide-react";
+import { Menu, ShoppingCart } from "lucide-react";
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useAppSelector } from "@/lib/store/hooks";
-import SearchButton from "./SearchButton";
 import { useQuery } from "@tanstack/react-query";
 import { getCartItems } from "@/lib/api";
 
 const Navbar = () => {
-  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchinput, setSearchInput] = useState(false);
   const pathname = usePathname();
-  const {data:cart}=useQuery({
-    queryKey:['cart'],
-    queryFn:()=>getCartItems()
-  })
+  const { data: cart } = useQuery({
+    queryKey: ["cart"],
+    queryFn: () => getCartItems(),
+  });
 
   // console.log('cart data',cart)
 
   const navItems = [
     { name: "Home", href: "/" },
     { name: "Menu", href: "/menu" },
-    { name: "Create Your Own", href: "/builder" },
+    {
+      name: "Create Your Own",
+      href: "https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road", // External link
+      isExternal: true, // Flag to mark this link as external
+    },
     { name: "About Us", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];
   const totalItems = cart?.length || 0;
-//  console.log('cart data in navbar',totalItems ,'and also dat',cart)
-  const handelSearch = () => {
-    setSearchInput(!searchinput);
-  };
+  // console.log(totalItems);
 
   return (
     <header className="sticky top-0 z-50 bg-[#0000003b] backdrop-blur-2xl py-5 text-white">
@@ -53,7 +50,37 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
+            {/* {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`pb-1 transition-colors ${
+                    isActive
+                      ? "text-red-500 border-b-2 border-red-500"
+                      : "text-white hover:text-red-400"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              );
+            })} */}
             {navItems.map((item) => {
+              if (item.isExternal) {
+                return (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer" // Security best practice
+                    className="pb-1 text-white hover:text-red-400"
+                  >
+                    {item.name}
+                  </a>
+                );
+              }
+
               const isActive = pathname === item.href;
               return (
                 <Link
@@ -122,6 +149,22 @@ const Navbar = () => {
         {mobileMenuOpen && (
           <nav className="lg:hidden pb-4 space-y-2 border-t border-border">
             {navItems.map((item) => {
+              // Check if the item is external
+              if (item.isExternal) {
+                return (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer" // Security best practice
+                    className="block px-4 py-2 rounded text-white hover:text-red-400"
+                  >
+                    {item.name}
+                  </a>
+                );
+              }
+
+              // For internal links
               const isActive = pathname === item.href;
               return (
                 <Link

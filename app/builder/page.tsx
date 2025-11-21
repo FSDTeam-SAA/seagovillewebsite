@@ -332,7 +332,7 @@ export default function PizzaBuilderPage() {
                                   }}
                                   disabled={isDisabled || !topping.isAvailable}
                                   className={`
-                                    p-3 rounded-lg border-2 transition-all rounded-none text-left text-sm
+                                    p-3  border-2 transition-all rounded-none text-left text-sm
                                     ${
                                       isSelected
                                         ? "border-[#D62828] bg-[#D62828]/10"
