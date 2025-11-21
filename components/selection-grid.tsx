@@ -26,7 +26,7 @@ export function SelectionGrid<T extends BaseItem>({
 }: SelectionGridProps<T>) {
   // Normalize whether items is an array or an object with `data`
   const list: T[] = Array.isArray(items) ? items : items?.data ?? [];
-  console.log(items, list, "show build  data");
+  // console.log(items, list, "show build  data");
 
   return (
     <div className={`grid grid-cols-1 lg:grid-cols-2 gap-4`}>

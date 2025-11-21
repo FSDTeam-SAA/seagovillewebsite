@@ -17,7 +17,7 @@ import { Review, useReview } from '@/hooks/review';
 const OurClientSay = () => {
   const [open,setOpen]=useState(false)
   const {data}=useReview()
-  console.log('review data',data?.data)
+  // console.log('review data',data?.data)
   const rewview= data?.data || [];
 
   const renderStars = (rating: number) => {
