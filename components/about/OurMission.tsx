@@ -13,23 +13,12 @@ const OurMission = () => {
             Our Mission
           </h1>
           <p className="text-xs md:text-sm text-[#6C757D] mb-3 md:mb-4  leading-relaxed font-normal text-center w-[90%] lg:w-full">
-            At Seagoville Carryout Pizza, our story begins with a passion for
-            authentic flavors, fresh ingredients, and a love for bringing people
-            together over great food. We believe that every pizza should be more
-            than just a meal—it should be an experience that excites your taste
-            buds and fills your heart with joy. From our handcrafted dough to
-            our signature sauces and premium toppings, we focus on delivering
-            quality you can taste in every slice. Our commitment to freshness,
-            flavor, and consistency has shaped who we are and continues to
-            inspire every pizza we create.
-          </p>
-          <p className="text-xs md:text-sm text-[#6C757D]  leading-relaxed font-normal text-center w-[90%] lg:w-full">
-            At Seagoville Carryout Pizza, our story begins with a passion for
-            authentic flavors, fresh ingredients, and a love for bringing people
-            together over great food. We believe that every pizza should be more
-            than just a meal—it should be an experience that excites your taste
-            buds and fills your heart with joy. From our handcrafted dough to
-            our signature sauces and premium toppings, we focus on delivering
+            At Craving Pizza, our story begins with a passion for authentic
+            flavors, fresh ingredients, and a love for bringing people together
+            over great food. We believe every pizza should be more than just a
+            meal — it should be an experience that excites your taste buds and
+            fills your heart with joy. From our handcrafted dough to our
+            signature sauces and premium toppings, we focus on delivering
             quality you can taste in every slice. Our commitment to freshness,
             flavor, and consistency has shaped who we are and continues to
             inspire every pizza we create.
