@@ -133,6 +133,7 @@ export const getCartItems = async () => {
     }
 
     const data = await res.json();
+    console.log("cart data all apis",data)
     return data.data || [];
   } catch (error) {
     console.error("Error fetching cart items:", error);
