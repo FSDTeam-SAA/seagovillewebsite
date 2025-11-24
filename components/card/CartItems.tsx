@@ -14,17 +14,9 @@ import {
 } from "@/lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { CartItem } from "@/lib/cartType";
-import { useRouter } from "next/navigation";
-
-interface OrderItem {
-  cartId: string;
-  quantity: number;
-  totalPrice: number;
-}
 
 const CartItems = () => {
   const queryClient = useQueryClient();
-  const router = useRouter();
   const [promoCode, setPromo] = useState("");
   const [optimisticCart, setOptimisticCart] = useState<CartItem[]>([]);
 
@@ -178,16 +170,16 @@ const CartItems = () => {
     toast.success("Thank you for use your Promo code");
   };
 
-  const handleOrderPage = () => {
-    router.push(`/checkout?couponCode:${promoCode}`);
-  };
+  // const handleOrderPage = () => {
+  //   router.push(`/checkout?couponCode:${promoCode}`);
+  // };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <ShoppingCart className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50 animate-pulse" />
-          <p className="text-muted-foreground">Loading your cart...</p>
+          <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
@@ -195,6 +187,8 @@ const CartItems = () => {
 
   const displayCart =
     derivedOptimisticCart.length > 0 ? derivedOptimisticCart : [];
+
+    console.log("chudlinkponk data",displayCart)
 
   if (displayCart.length === 0) {
     return (
@@ -221,11 +215,11 @@ const CartItems = () => {
                 </Button>
               </Link>
 
-              <Link href="/builder">
+              {/* <Link href="/builder">
                 <Button className="bg-[#D62828] hover:bg-primary/90 cursor-pointer">
                   Build Pizza
                 </Button>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
