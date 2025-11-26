@@ -9,13 +9,12 @@ import { MenuItem } from "@/lib/types";
 import { useAddToCartMutation } from "@/hooks/use-cart";
 // import { Toaster } from "sonner";
 
-interface SizeOption {
+export interface SizeOption {
+  key: string;
   size: string;
   price: number;
   description: string;
-  key: "small" | "medium" | "large";
 }
-
 
 export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
   const { mutate: addToCartMutation } = useAddToCartMutation();
@@ -28,27 +27,20 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
     singlePizza?.images[0]?.url || "/detail2.jpg"
   );
 
-  const sizeOptions: SizeOption[] = [
-    {
-      size: "Small Size",
-      price: singlePizza.price.small,
-      description: "Perfect for one person",
-      key: "small",
-    },
-    {
-      size: "Medium Size",
-      price: singlePizza.price.medium,
-      description: "Great for sharing",
-      key: "medium",
-    },
-    {
-      size: "Large Size",
-      price: singlePizza.price.large,
-      description: "Family size feast",
-      key: "large",
-    },
+  const descriptions = [
+    "Perfect for one person",
+    "Great for sharing",
+    "Family size feast",
   ];
 
+  const sizeKeys = ["small", "medium", "large"] as const;
+
+  const sizeOptions: SizeOption[] = sizeKeys.map((key, index) => ({
+    key,
+    size: `${singlePizza.pieces[index]} Pieces`,
+    price: singlePizza.price[index],
+    description: descriptions[index],
+  }));
 
   const ingredients =
     singlePizza.ingredients && singlePizza.ingredients.length > 0
@@ -73,7 +65,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
     size: "small" | "medium" | "large" = "small",
     onSuccess?: () => void
   ) => {
-    const price = pizza.price[size];
+    const price = pizza.price[0];
 
     if (!price) {
       toast.error("Selected size is not available for this pizza");
@@ -197,7 +189,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
                 {sizeOptions.map((option) => (
                   <button
                     key={option.key}
-                    onClick={() => setSelectedSize(option.key)}
+                    // onClick={() => setSelectedSize(option.key)}
                     className={`p-3 rounded-lg cursor-pointer border-2 text-center transition-all ${
                       selectedSize === option.key
                         ? "border-red-500 bg-red-50"
@@ -229,14 +221,22 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={() => handleAddToCart(singlePizza!, selectedSize)} // Here we call handleAddToCart
-                disabled={!singlePizza.isAvailable}
+              <a
+                href={
+                  "https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road"
+                }
+                target="_blank"
                 className="flex-1 cursor-pointer bg-white hover:bg-gray-50 text-red-600 border border-red-600 font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <ShoppingCart className="w-5 h-5" />
-                Add to Cart
-              </button>
+                <button
+                  // onClick={() => handleAddToCart(singlePizza!, selectedSize)} // Here we call handleAddToCart
+                  disabled={!singlePizza.isAvailable}
+                  className="flex-1 cursor-pointer bg-white hover:bg-gray-50 text-red-600 border border-red-600 font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  Add to Cart
+                </button>
+              </a>
               <a
                 href={
                   "https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road"
@@ -247,6 +247,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
                 <button
                 // onClick={handleOrderNow}
                 // disabled={!singlePizza.isAvailable}
+                className="cursor-pointer"
                 >
                   Order Now
                 </button>

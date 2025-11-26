@@ -1,24 +1,16 @@
 "use client";
-import {  ShoppingCart, Loader2 } from "lucide-react";
+import { ShoppingCart, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types";
 import Image from "next/image";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
 import Link from "next/link";
 
 interface PizzaCardProps {
   pizza: Product;
   onAddToCart?: () => void;
   onOrder?: () => void;
-  selectedSize?: "small" | "medium" | "large";
-  onSizeChange?: (size: "small" | "medium" | "large") => void;
+  selectedSize?: number; // index of selected size: 0=small, 1=medium, 2=large
+  onSizeChange?: (sizeIndex: number) => void;
   onConfirmAction?: () => void;
   isDialogOpen?: boolean;
   onCloseDialog?: () => void;
@@ -30,7 +22,7 @@ export function PizzaCard({
   pizza,
   onAddToCart,
   onOrder,
-  selectedSize = "small",
+  selectedSize = 0, // default to small (first price)
   onSizeChange,
   onConfirmAction,
   isDialogOpen = false,
@@ -39,20 +31,19 @@ export function PizzaCard({
   isPending = false,
 }: PizzaCardProps) {
   const imageUrl = pizza.images?.[0]?.url || "/placeholder.svg";
-  const smallPrice = pizza.price?.small || 0;
-
-  const handleSizeSelect = (size: "small" | "medium" | "large") => {
-    onSizeChange?.(size);
-  };
-
+  
+  // Safe price handling with fallbacks
   const getCurrentPrice = () => {
-    return pizza.price[selectedSize] || smallPrice;
+    if (!pizza.price || !Array.isArray(pizza.price) || pizza.price.length === 0) {
+      return 0; // Default price if price array is empty or undefined
+    }
+    return pizza.price[selectedSize] || pizza.price[0] || 0;
   };
 
-  const handleOrderNowClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onOrder?.();
+  // Get size label safely
+  const getSizeLabel = (index: number) => {
+    const sizes = ["Small", "Medium", "Large"];
+    return sizes[index] || "Small";
   };
 
   const handleAddToCartClick = (e: React.MouseEvent) => {
@@ -61,26 +52,13 @@ export function PizzaCard({
     onAddToCart?.();
   };
 
-  const getDialogTitle = () => {
-    return dialogType === "cart"
-      ? "Select size for adding to cart"
-      : "Select size for ordering";
+  const handleOrderNowClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onOrder?.();
   };
 
-  const getActionButtonText = () => {
-    const price = pizza.price[selectedSize]?.toFixed(2);
-    if (dialogType === "cart") {
-      return `Add to Cart - $${price}`;
-    } else {
-      return `Order Now - $${price}`;
-    }
-  };
-
-  const getActionButtonIcon = () => {
-    return dialogType === "cart" ? (
-      <ShoppingCart className="w-4 h-4 mr-2" />
-    ) : null;
-  };
+  const currentPrice = getCurrentPrice();
 
   return (
     <>
@@ -92,7 +70,7 @@ export function PizzaCard({
               alt={pizza.name}
               width={496}
               height={464}
-              className="w-full h-full object-cover  hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             />
           </div>
         </Link>
@@ -108,83 +86,89 @@ export function PizzaCard({
             </p>
           </Link>
 
+          {/* Size Selector (if multiple prices available) */}
+          {pizza.price && pizza.price.length > 1 && (
+            <div className="mb-4">
+              <div className="flex gap-2 flex-wrap">
+                {pizza.price.map((price, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onSizeChange?.(index);
+                    }}
+                    className={`px-3 py-1 text-sm rounded border transition-colors ${
+                      selectedSize === index
+                        ? "border-[#D62828] bg-red-50 text-[#D62828] font-semibold"
+                        : "border-gray-300 text-gray-600 hover:border-gray-400"
+                    }`}
+                  >
+                    {getSizeLabel(index)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <span className="flex gap-2 items-center text-base lg:text-2xl font-bold text-[#D62828] leading-[150%]">
-              ${getCurrentPrice().toFixed(2)}
-              <span className="text-[#6C757D] line-through text-xs lg:text-sm">
-                ${(getCurrentPrice() + 5).toFixed(2)}
-              </span>
+              ${currentPrice.toFixed(2)}
+              {currentPrice > 0 && (
+                <span className="text-[#6C757D] line-through text-xs lg:text-sm">
+                  ${(currentPrice + 5).toFixed(2)}
+                </span>
+              )}
             </span>
 
             <div className="flex items-center gap-2">
               <Button
                 size="sm"
                 onClick={handleAddToCartClick}
-                className="bg-transparent rounded-none cursor-pointer border hover:text-white border-[#D62828] hover:bg-red-200 "
+                className="bg-transparent rounded-none cursor-pointer border hover:text-white border-[#D62828] hover:bg-red-200"
               >
-                <ShoppingCart className="w-4 h-4 text-[#D62828] " />
+                <ShoppingCart className="w-4 h-4 text-[#D62828]" />
               </Button>
 
-              <a
-                href={`https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road`}
-                target="_blank"
-                // onClick={handleOrderNowClick}
+              <Button 
+                onClick={handleOrderNowClick}
+                className="bg-[#D62828] hover:bg-red-500 rounded-none cursor-pointer text-sm lg:text-base leading-[150%] text-[#F8F9FA]"
               >
-                <Button className="bg-[#D62828] hover:bg-red-500 rounded-none cursor-pointer text-sm lg:text-base leading-[150%] text-[#F8F9FA]">
-                  Order Now
-                </Button>
-              </a>
+                Order Now
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Size Selection Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={onCloseDialog}>
+      {/* Size Selection Dialog (commented out but corrected) */}
+      {/* <Dialog open={isDialogOpen} onOpenChange={onCloseDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{getDialogTitle()}</DialogTitle>
+            <DialogTitle>
+              {dialogType === "cart" 
+                ? "Select size for adding to cart" 
+                : "Select size for ordering"
+              }
+            </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div
-              onClick={() => handleSizeSelect("small")}
-              className={`grid gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
-                selectedSize === "small"
-                  ? "border-[#D62828] bg-red-50"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
-            >
-              <p className="font-semibold">Small</p>
-              <h2 className="text-lg font-bold text-[#D62828]">
-                ${pizza.price.small?.toFixed(2)}
-              </h2>
-            </div>
-            <div
-              onClick={() => handleSizeSelect("medium")}
-              className={`grid gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
-                selectedSize === "medium"
-                  ? "border-[#D62828] bg-red-50"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
-            >
-              <p className="font-semibold">Medium</p>
-              <h2 className="text-lg font-bold text-[#D62828]">
-                ${pizza.price.medium?.toFixed(2)}
-              </h2>
-            </div>
-            <div
-              onClick={() => handleSizeSelect("large")}
-              className={`grid gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
-                selectedSize === "large"
-                  ? "border-[#D62828] bg-red-50"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
-            >
-              <p className="font-semibold">Large</p>
-              <h2 className="text-lg font-bold text-[#D62828]">
-                ${pizza.price.large?.toFixed(2)}
-              </h2>
-            </div>
+            {pizza.price?.map((price, index) => (
+              <div
+                key={index}
+                onClick={() => onSizeChange?.(index)}
+                className={`grid gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
+                  selectedSize === index
+                    ? "border-[#D62828] bg-red-50"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
+              >
+                <p className="font-semibold">{getSizeLabel(index)}</p>
+                <h2 className="text-lg font-bold text-[#D62828]">
+                  ${price?.toFixed(2) || "0.00"}
+                </h2>
+              </div>
+            ))}
           </div>
           <DialogFooter>
             <DialogClose asChild>
@@ -199,14 +183,17 @@ export function PizzaCard({
             >
               {isPending ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                getActionButtonIcon()
-              )}
-              {isPending ? "Processing..." : getActionButtonText()}
+              ) : dialogType === "cart" ? (
+                <ShoppingCart className="w-4 h-4 mr-2" />
+              ) : null}
+              {isPending 
+                ? "Processing..." 
+                : `${dialogType === "cart" ? "Add to Cart" : "Order Now"} - $${(pizza.price?.[selectedSize] || 0)?.toFixed(2)}`
+              }
             </Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 }

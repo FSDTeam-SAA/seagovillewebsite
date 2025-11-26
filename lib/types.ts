@@ -109,22 +109,24 @@ export interface MenuImage {
   _id: string;
 }
 
-export interface MenuPrice {
-  small: number;
-  medium: number;
-  large: number;
-}
-
 export interface MenuItem {
-  price: MenuPrice;
   _id: string;
   name: string;
   category: string;
   description: string;
+
+  price: number[];     // Array of prices [small, medium, large]
+  pieces: number[];    // Array of pieces [small, medium, large]
+  sizes: string[];     // Add this if missing
+
   images: MenuImage[];
+  ingredients: string[]; // Add this if missing
+
+  isAvailable: boolean;
+  totalSold: number;    // Add this if missing
+  
   createdAt: string;
   updatedAt: string;
-  isAvailable: boolean;
 }
 
 export interface Meta {
@@ -150,22 +152,29 @@ export interface ProductImage {
   _id: string;
 }
 
-export interface ProductPrice {
-  small: number;
-  medium: number;
-  large: number;
-}
-
 export interface Product {
   _id: string;
   name: string;
   category: string;
   description: string;
-  price: ProductPrice;
+
+  // Make price optional or provide default
+  price?: number[];
+
+  // sizes array: ["21", "10", "40", "3"]
+  sizes: string[];
+
+  // pieces array: [1, 15, 20]
+  pieces: number[];
+
   images: ProductImage[];
-  createdAt: string; // or Date if you convert
-  updatedAt: string; // or Date if you convert
+  ingredients: string[];
+
   isAvailable: boolean;
+  totalSold: number;
+
+  createdAt: string;
+  updatedAt: string;
 }
 
 ///

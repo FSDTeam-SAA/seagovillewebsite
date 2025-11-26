@@ -35,7 +35,7 @@ const SingnaturePizza = () => {
     size: "small" | "medium" | "large" = "small",
     onSuccess?: () => void
   ) => {
-    const price = pizza.price[size];
+    const price = pizza.price[0];
 
     if (!price) {
       toast.error("Selected size is not available for this pizza");
@@ -163,13 +163,13 @@ if (isLoading) {
               pizza={pizza}
               onAddToCart={() => handleOpenSizeDialog(pizza, "cart")}
               onOrder={() => handleOpenSizeDialog(pizza, "order")}
-              selectedSize={selectedSize}
-              onSizeChange={setSelectedSize}
-              onConfirmAction={handleConfirmAction}
-              isDialogOpen={selectedPizza?._id === pizza._id}
-              onCloseDialog={() => setSelectedPizza(null)}
-              dialogType={dialogType}
-              isPending={isPending}
+              // selectedSize={selectedSize}
+              // onSizeChange={setSelectedSize}
+              // onConfirmAction={handleConfirmAction}
+              // isDialogOpen={selectedPizza?._id === pizza._id}
+              // onCloseDialog={() => setSelectedPizza(null)}
+              // dialogType={dialogType}
+              // isPending={isPending}
             />
           ))}
         </div>

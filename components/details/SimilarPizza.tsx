@@ -12,26 +12,34 @@ interface SimilarPizzaProps {
 }
 
 export const SimilarPizza = ({ similarPizzas = [] }: SimilarPizzaProps) => {
-  const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("small");
+  const [selectedSize, setSelectedSize] = useState<number>(0); // 0=small, 1=medium, 2=large
   const [selectedPizza, setSelectedPizza] = useState<MenuItem | null>(null);
   const [dialogType, setDialogType] = useState<"cart" | "order">("cart");
   const { mutate: addToCartMutation, isPending } = useAddToCartMutation();
   const router = useRouter();
 
+  // Convert size index to string for the API
+  const getSizeString = (sizeIndex: number): "small" | "medium" | "large" => {
+    const sizes = ["small", "medium", "large"] as const;
+    return sizes[sizeIndex] || "small";
+  };
+
   const handleAddToCart = (
     pizza: MenuItem,
-    size: "small" | "medium" | "large" = "small",
+    sizeIndex: number = 0,
     onSuccess?: () => void
   ) => {
-    const price = pizza.price[size];
+    const price = pizza.price?.[sizeIndex];
 
     if (!price) {
       toast.error("Selected size is not available for this pizza");
       return;
     }
 
+    const sizeString = getSizeString(sizeIndex);
+
     addToCartMutation(
-      { menuId: pizza._id, size },
+      { menuId: pizza._id, size: sizeString },
       {
         onSuccess: () => {
           toast.success("WoW! Successfully added the pizza to your cart");
@@ -46,7 +54,7 @@ export const SimilarPizza = ({ similarPizzas = [] }: SimilarPizzaProps) => {
 
   const handleOpenSizeDialog = (pizza: MenuItem, type: "cart" | "order" = "cart") => {
     setSelectedPizza(pizza);
-    setSelectedSize("small");
+    setSelectedSize(0); // Reset to small
     setDialogType(type);
   };
 
@@ -65,6 +73,10 @@ export const SimilarPizza = ({ similarPizzas = [] }: SimilarPizzaProps) => {
         });
       }
     }
+  };
+
+  const handleSizeChange = (sizeIndex: number) => {
+    setSelectedSize(sizeIndex);
   };
 
   // Don't show the section if there are no similar pizzas
@@ -94,7 +106,7 @@ export const SimilarPizza = ({ similarPizzas = [] }: SimilarPizzaProps) => {
               onAddToCart={() => handleOpenSizeDialog(pizza, "cart")}
               onOrder={() => handleOpenSizeDialog(pizza, "order")}
               selectedSize={selectedSize}
-              onSizeChange={setSelectedSize}
+              onSizeChange={handleSizeChange}
               onConfirmAction={handleConfirmAction}
               isDialogOpen={selectedPizza?._id === pizza._id}
               onCloseDialog={() => setSelectedPizza(null)}
@@ -104,14 +116,14 @@ export const SimilarPizza = ({ similarPizzas = [] }: SimilarPizzaProps) => {
           ))}
         </div>
 
-        {/* Optional: Show message if only a few similar pizzas
+        {/* Optional: Show message if only a few similar pizzas */}
         {similarPizzas.length <= 3 && (
           <div className="text-center">
             <p className="text-gray-500 text-sm">
               Explore our full menu for more delicious options
             </p>
           </div>
-        )} */}
+        )}
       </div>
     </section>
   );

@@ -5,24 +5,26 @@ export interface Image {
   url: string;
 }
 
-export interface Price {
-  small: number;
-  medium: number;
-  large: number;
-}
-
 export interface MenuItem {
   _id: string;
   name: string;
   category: string;
   description: string;
+
+  // API returns array, not object
+  price: number[];
+  sizes: string[];
+  pieces: number[];
+
   images: Image[];
-  price: Price;
+
   isAvailable: boolean;
   totalSold: number;
+
   createdAt: string;
   updatedAt: string;
-  ingredients?: string[]; // Make this optional if it might not exist
+
+  ingredients?: string[];
 }
 
 export interface MenuResponse {
