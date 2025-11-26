@@ -26,7 +26,7 @@ export function PizzaCard({
 
 
 }: PizzaCardProps) {
-  const imageUrl = pizza.images?.[0]?.url || "/placeholder.svg";
+  const imageUrl = pizza.images?.[0]?.url || "/noimage.jpg";
 
   // Safe price handling with fallbacks
   const getCurrentPrice = () => {
