@@ -21,7 +21,9 @@ import { Card, CardContent } from "@/components/ui/card";
 const SingnaturePizza = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const { mutate: addToCartMutation, isPending } = useAddToCartMutation();
-  const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("small");
+    const [selectedSize, setSelectedSize] = useState<number>(0); // 0=small, 1=medium, 2=large
+  
+  
   const [selectedPizza, setSelectedPizza] = useState<MenuItem | null>(null);
   const [dialogType, setDialogType] = useState<"cart" | "order">("cart");
   const dispatch = useAppDispatch();
@@ -30,54 +32,58 @@ const SingnaturePizza = () => {
 
   const { data, isLoading, isError, error } = useAllMenuData(activeCategory, page);
 
-  const handleAddToCart = (
-    pizza: MenuItem,
-    size: "small" | "medium" | "large" = "small",
-    onSuccess?: () => void
-  ) => {
-    const price = pizza.price[0];
-
-    if (!price) {
-      toast.error("Selected size is not available for this pizza");
-      return;
-    }
-
-    addToCartMutation(
-      { menuId: pizza._id, size },
-      {
-        onSuccess: () => {
-          toast.success("WoW! Successfully added the pizza to your cart");
-          onSuccess?.();
-        },
-        onError: (error) => {
-          toast.error(error?.message || "Failed to add to cart");
-        },
-      }
-    );
+   const handleSizeChange = (sizeIndex: number) => {
+    setSelectedSize(sizeIndex);
   };
 
-  const handleOpenSizeDialog = (pizza: MenuItem, type: "cart" | "order" = "cart") => {
-    setSelectedPizza(pizza);
-    setSelectedSize("small");
-    setDialogType(type);
-  };
+  // const handleAddToCart = (
+  //   pizza: MenuItem,
+  //   size: string[],
+  //   onSuccess?: () => void
+  // ) => {
+  //   const price = pizza.price[0];
 
-  const handleConfirmAction = () => {
-    if (selectedPizza) {
-      if (dialogType === "order") {
-        // For order: add to cart and then redirect to checkout
-        handleAddToCart(selectedPizza, selectedSize, () => {
-          router.push('/checkout');
-          setSelectedPizza(null);
-        });
-      } else {
-        // For cart: just add to cart
-        handleAddToCart(selectedPizza, selectedSize, () => {
-          setSelectedPizza(null);
-        });
-      }
-    }
-  };
+  //   if (!price) {
+  //     toast.error("Selected size is not available for this pizza");
+  //     return;
+  //   }
+
+  //   addToCartMutation(
+  //     { menuId: pizza._id, size },
+  //     {
+  //       onSuccess: () => {
+  //         toast.success("WoW! Successfully added the pizza to your cart");
+  //         onSuccess?.();
+  //       },
+  //       onError: (error) => {
+  //         toast.error(error?.message || "Failed to add to cart");
+  //       },
+  //     }
+  //   );
+  // };
+
+  // const handleOpenSizeDialog = (pizza: MenuItem, type: "cart" | "order" = "cart") => {
+  //   setSelectedPizza(pizza);
+  //   setSelectedSize("small");
+  //   setDialogType(type);
+  // };
+
+  // const handleConfirmAction = () => {
+  //   if (selectedPizza) {
+  //     if (dialogType === "order") {
+  //       // For order: add to cart and then redirect to checkout
+  //       handleAddToCart(selectedPizza, selectedSize, () => {
+  //         router.push('/checkout');
+  //         setSelectedPizza(null);
+  //       });
+  //     } else {
+  //       // For cart: just add to cart
+  //       handleAddToCart(selectedPizza, selectedSize, () => {
+  //         setSelectedPizza(null);
+  //       });
+  //     }
+  //   }
+  // };
 
 if (isError) {
   return (
@@ -140,7 +146,8 @@ if (isLoading) {
   );
 }
 
-  const pizzaData = data?.items;
+  const pizzaData = data?.items?.slice(0, 6) || [];
+
 
   return (
     <section className="py-20 md:py-32">
@@ -161,13 +168,13 @@ if (isLoading) {
             <PizzaCard
               key={pizza._id}
               pizza={pizza}
-              onAddToCart={() => handleOpenSizeDialog(pizza, "cart")}
-              onOrder={() => handleOpenSizeDialog(pizza, "order")}
+              // onAddToCart={() => handleOpenSizeDialog(pizza, "cart")}
+              // onOrder={() => handleOpenSizeDialog(pizza, "order")}
               selectedSize={selectedSize}
               onSizeChange={setSelectedSize}
-              onConfirmAction={handleConfirmAction}
+              // onConfirmAction={handleConfirmAction}
               isDialogOpen={selectedPizza?._id === pizza._id}
-              onCloseDialog={() => setSelectedPizza(null)}
+          
               dialogType={dialogType}
               isPending={isPending}
             />

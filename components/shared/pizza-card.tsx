@@ -7,34 +7,34 @@ import Link from "next/link";
 
 interface PizzaCardProps {
   pizza: Product;
-  onAddToCart?: () => void;
-  onOrder?: () => void;
-  selectedSize?: number; // index of selected size: 0=small, 1=medium, 2=large
+
+  selectedSize?: number;
   onSizeChange?: (sizeIndex: number) => void;
-  onConfirmAction?: () => void;
+
   isDialogOpen?: boolean;
-  onCloseDialog?: () => void;
+
   dialogType?: "cart" | "order";
   isPending?: boolean;
 }
 
 export function PizzaCard({
   pizza,
-  onAddToCart,
-  onOrder,
-  selectedSize = 0, 
+
+  selectedSize = 0,
   onSizeChange,
-  onConfirmAction,
-  isDialogOpen = false,
-  onCloseDialog,
-  dialogType = "cart",
-  isPending = false,
+
+
+
 }: PizzaCardProps) {
   const imageUrl = pizza.images?.[0]?.url || "/placeholder.svg";
-  
+
   // Safe price handling with fallbacks
   const getCurrentPrice = () => {
-    if (!pizza?.price || !Array.isArray(pizza?.price) || pizza?.price.length === 0) {
+    if (
+      !pizza?.price ||
+      !Array.isArray(pizza?.price) ||
+      pizza?.price.length === 0
+    ) {
       return 0; // Default price if price array is empty or undefined
     }
     return pizza?.price[selectedSize] || pizza?.price[0] || 0;
@@ -46,17 +46,17 @@ export function PizzaCard({
     return sizes[index] || "Small";
   };
 
-  const handleAddToCartClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onAddToCart?.();
-  };
+  // const handleAddToCartClick = (e: React.MouseEvent) => {
+  //   e.preventDefault();
+  //   e.stopPropagation();
+  //   onAddToCart?.();
+  // };
 
-  const handleOrderNowClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onOrder?.();
-  };
+  // const handleOrderNowClick = (e: React.MouseEvent) => {
+  //   e.preventDefault();
+  //   e.stopPropagation();
+  //   onOrder?.();
+  // };
 
   const currentPrice = getCurrentPrice();
 
@@ -122,20 +122,31 @@ export function PizzaCard({
             </span>
 
             <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                onClick={handleAddToCartClick}
-                className="bg-transparent rounded-none cursor-pointer border hover:text-white border-[#D62828] hover:bg-red-200"
+              <Link
+                href="https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <ShoppingCart className="w-4 h-4 text-[#D62828]" />
-              </Button>
-
-              <Button 
-                onClick={handleOrderNowClick}
-                className="bg-[#D62828] hover:bg-red-500 rounded-none cursor-pointer text-sm lg:text-base leading-[150%] text-[#F8F9FA]"
+                <Button
+                  size="sm"
+                  // onClick={handleAddToCartClick}
+                  className="bg-transparent rounded-none cursor-pointer border hover:text-white border-[#D62828] hover:bg-red-200"
+                >
+                  <ShoppingCart className="w-4 h-4 text-[#D62828]" />
+                </Button>
+              </Link>
+              <Link
+                href="https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Order Now
-              </Button>
+                <Button
+                  // onClick={handleOrderNowClick}
+                  className="bg-[#D62828] hover:bg-red-500 rounded-none cursor-pointer text-sm lg:text-base leading-[150%] text-[#F8F9FA]"
+                >
+                  Order Now
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

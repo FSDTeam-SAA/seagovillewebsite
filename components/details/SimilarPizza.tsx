@@ -103,13 +103,12 @@ export const SimilarPizza = ({ similarPizzas = [] }: SimilarPizzaProps) => {
             <PizzaCard
               key={pizza._id}
               pizza={pizza}
-              onAddToCart={() => handleOpenSizeDialog(pizza, "cart")}
-              onOrder={() => handleOpenSizeDialog(pizza, "order")}
+        
               selectedSize={selectedSize}
               onSizeChange={handleSizeChange}
-              onConfirmAction={handleConfirmAction}
+             
               isDialogOpen={selectedPizza?._id === pizza._id}
-              onCloseDialog={() => setSelectedPizza(null)}
+             
               dialogType={dialogType}
               isPending={isPending}
             />

@@ -4,83 +4,89 @@ import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/lib/store/hooks";
 import { useAllMenuData } from "@/hooks/all-menudata";
-import { MenuItem, Product } from "@/lib/types";
+import { MenuItem } from "@/lib/types";
 import { PizzaFilterTabs } from "../pizza/pizza-filter-tabs";
 import { PizzaCard } from "../shared/pizza-card";
 import { Button } from "../ui/button";
-import { useAddToCartMutation } from "@/hooks/use-cart";
+// import { useAddToCartMutation } from "@/hooks/use-cart";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const AllMenu = () => {
   const [activeCategory, setActiveCategory] = useState("all");
-  const { mutate: addToCartMutation, isPending } = useAddToCartMutation();
-  const [selectedSize, setSelectedSize] = useState<
-    "small" | "medium" | "large"
-  >("small");
+  // const { mutate: addToCartMutation, isPending } = useAddToCartMutation();
+  const [selectedSize, setSelectedSize] = useState<number>(0);
   const [selectedPizza, setSelectedPizza] = useState<MenuItem | null>(null);
   const [dialogType, setDialogType] = useState<"cart" | "order">("cart");
-  const route = useRouter();
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const [page, setPage] = useState(1);
-  const limit = 10;
+  // const limit = 10;
 
   const { data, isLoading, isError, error } = useAllMenuData(
     activeCategory,
     page
   );
-
-  const handleAddToCart = (
-    pizza: MenuItem,
-    size: "small" | "medium" | "large" = "small",
-    onSuccess?: () => void
-  ) => {
-    const price = pizza.price[size];
-
-    if (!price) {
-      toast.error("Selected size is not available for this pizza");
-      return;
-    }
-
-    addToCartMutation(
-      { menuId: pizza._id, size },
-      {
-        onSuccess: () => {
-          toast.success("WoW! Successfully added the pizza to your cart");
-          onSuccess?.();
-        },
-        onError: (error) => {
-          toast.error(error?.message || "Failed to add to cart");
-        },
-      }
-    );
+   const handleSizeChange = (sizeIndex: number) => {
+    setSelectedSize(sizeIndex);
   };
 
-  const handleOpenSizeDialog = (
-    pizza: MenuItem,
-    type: "cart" | "order" = "cart"
-  ) => {
-    setSelectedPizza(pizza);
-    setSelectedSize("small");
-    setDialogType(type);
-  };
+  // const handleAddToCart = (
+  //   pizza: MenuItem,
+  //   sizeIndex: number = 0,
+  //   onSuccess?: () => void
+  // ) => {
+  //   const price = pizza.price?.[sizeIndex];
 
-  const handleConfirmAction = () => {
-    if (selectedPizza) {
-      if (dialogType === "order") {
-        // For order: add to cart and then redirect to checkout
-        handleAddToCart(selectedPizza, selectedSize, () => {
-          route.push("/checkout");
-          setSelectedPizza(null);
-        });
-      } else {
-        // For cart: just add to cart
-        handleAddToCart(selectedPizza, selectedSize, () => {
-          setSelectedPizza(null);
-        });
-      }
-    }
-  };
+  //   if (!price) {
+  //     toast.error("Selected size is not available for this pizza");
+  //     return;
+  //   }
+
+  //   const sizeString = sizeIndex === 0 ? "small" : sizeIndex === 1 ? "medium" : "large";
+
+  //   addToCartMutation(
+  //     { menuId: pizza._id, size: sizeString },
+  //     {
+  //       onSuccess: () => {
+  //         toast.success("WoW! Successfully added the pizza to your cart");
+  //         onSuccess?.();
+  //       },
+  //       onError: (error: Error) => {
+  //         toast.error(error?.message || "Failed to add to cart");
+  //       },
+  //     }
+  //   );
+  // };
+
+  // const handleOpenSizeDialog = (
+  //   pizza: MenuItem,
+  //   type: "cart" | "order" = "cart"
+  // ) => {
+  //   setSelectedPizza(pizza);
+  //   setSelectedSize(0);
+  //   setDialogType(type);
+  // };
+
+  // const handleConfirmAction = () => {
+  //   if (selectedPizza) {
+  //     if (dialogType === "order") {
+  //       handleAddToCart(selectedPizza, selectedSize, () => {
+  //         router.push("/checkout");
+  //         setSelectedPizza(null);
+  //       });
+  //     } else {
+  //       handleAddToCart(selectedPizza, selectedSize, () => {
+  //         setSelectedPizza(null);
+  //       });
+  //     }
+  //   }
+  // };
+
+  // const handleSizeChange = (size: "small" | "medium" | "large") => {
+  //   const sizeIndex = size === "small" ? 0 : size === "medium" ? 1 : 2;
+  //   setSelectedSize(sizeIndex);
+  // };
 
   if (isError) {
     return (
@@ -89,8 +95,9 @@ const AllMenu = () => {
       </div>
     );
   }
+//  console.log('datassss',data)
+  const pizzaData = data?.items || [];
 
-  const pizzaData = data?.items;
   return (
     <section>
       <div className="container mx-auto">
@@ -118,24 +125,24 @@ const AllMenu = () => {
             {!isLoading && !error && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                  {pizzaData?.map((pizza: Product) => (
+                  {pizzaData.map((pizza: MenuItem) => (
                     <PizzaCard
                       key={pizza._id}
                       pizza={pizza}
-                      onAddToCart={() => handleOpenSizeDialog(pizza, "cart")}
-                      onOrder={() => handleOpenSizeDialog(pizza, "order")}
+                      // onAddToCart={() => handleOpenSizeDialog(pizza, "cart")}
+                      // onOrder={() => handleOpenSizeDialog(pizza, "order")}
                       selectedSize={selectedSize}
-                      onSizeChange={setSelectedSize}
-                      onConfirmAction={handleConfirmAction}
+                      onSizeChange={handleSizeChange}
+                      // onConfirmAction={handleConfirmAction}
                       isDialogOpen={selectedPizza?._id === pizza._id}
-                      onCloseDialog={() => setSelectedPizza(null)}
+               
                       dialogType={dialogType}
-                      isPending={isPending}
+                 
                     />
                   ))}
                 </div>
 
-                {pizzaData?.length === 0 && (
+                {pizzaData.length === 0 && (
                   <div className="text-center py-12">
                     <p className="text-lg text-muted-foreground mb-4">
                       No pizzas found in this category
@@ -151,14 +158,14 @@ const AllMenu = () => {
               </>
             )}
           </div>
-          {pizzaData?.length !== 0 ? (
+          {pizzaData.length !== 0 ? (
             <div className="flex gap-2 items-center mt-4 justify-center">
               <Button
                 disabled={page === 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="bg-transparent text-red-500  hover:bg-gray-300  cursor-pointer"
+                className="bg-transparent text-red-500 hover:bg-gray-300 cursor-pointer"
               >
-                <ChevronLeft className="w-10! h-10! " />
+                <ChevronLeft className="w-10! h-10!" />
               </Button>
 
               <span className="flex items-center gap-2">
@@ -189,7 +196,7 @@ const AllMenu = () => {
               <Button
                 disabled={page >= (data?.meta?.totalPages || 1)}
                 onClick={() => setPage((p) => p + 1)}
-                className="bg-transparent text-red-500  hover:bg-gray-300 cursor-pointer"
+                className="bg-transparent text-red-500 hover:bg-gray-300 cursor-pointer"
               >
                 <ChevronRight className="w-10! h-10!"/>
               </Button>

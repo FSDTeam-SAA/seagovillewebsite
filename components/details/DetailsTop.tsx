@@ -7,25 +7,22 @@ import { toast } from "sonner";
 import { MenuResponse } from "@/lib/detailstype";
 import { MenuItem } from "@/lib/types";
 import { useAddToCartMutation } from "@/hooks/use-cart";
-// import { Toaster } from "sonner";
 
 export interface SizeOption {
   key: string;
   size: string;
-  price: number[];
-  pieces?: number[]
+  price: number;
+  pieces?: number;
   description: string;
 }
 
 export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
   const { mutate: addToCartMutation } = useAddToCartMutation();
   const singlePizza = pizza?.data;
-  const [selectedSize, setSelectedSize] = useState<
-    "small" | "medium" | "large"
-  >("small");
+  const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("small");
 
   const [mainImage, setMainImage] = useState(
-    singlePizza?.images[0]?.url || "/detail2.jpg"
+    singlePizza?.images?.[0]?.url || "/detail2.jpg"
   );
 
   const descriptions = [
@@ -34,19 +31,17 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
     "Family size feast",
   ];
 
-  const sizeKeys = singlePizza.sizes as const;
-
-  const sizeOptions: SizeOption[] = sizeKeys.map((key, index) => ({
-    key,
-    
-    size: `${singlePizza.sizes[index]}`,
-    price: singlePizza.price[index],
-    pieces:singlePizza.pieces ? singlePizza?.pieces[index] : undefined,
-    description: descriptions[index],
-  }));
+  // Create size options safely
+  const sizeOptions: SizeOption[] = singlePizza?.sizes?.map((size, index) => ({
+    key: size,
+    size: size,
+    price: singlePizza.price?.[index] || 0,
+    pieces: singlePizza.pieces?.[index],
+    description: descriptions[index] || "Delicious pizza size",
+  })) || [];
 
   const ingredients =
-    singlePizza.ingredients && singlePizza.ingredients.length > 0
+    singlePizza?.ingredients && singlePizza.ingredients.length > 0
       ? singlePizza.ingredients
       : [
           "Fresh mozzarella cheese",
@@ -57,20 +52,22 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
           "100% natural ingredients",
         ];
 
-  // Use all available images or fallback to multiple copies of the main image
+  // Use all available images or fallback
   const images =
-    singlePizza.images && singlePizza.images.length > 0
+    singlePizza?.images && singlePizza.images.length > 0
       ? singlePizza.images.map((img) => img.url)
-      : [singlePizza.images[0]?.url || "/placeholder.svg"];
+      : [singlePizza?.images?.[0]?.url || "/placeholder.svg"];
 
   const handleAddToCart = (
     pizza: MenuItem,
-    size: "small" | "medium" | "large" = "small",
-    onSuccess?: () => void
+    size: "small" | "medium" | "large" = "small"
   ) => {
-    const price = pizza.price[0];
-
-    if (!price) {
+    // Find the index of the selected size
+    const sizeIndex = singlePizza.sizes.findIndex(s => 
+      s.toLowerCase() === size
+    );
+    
+    if (sizeIndex === -1 || !singlePizza.price?.[sizeIndex]) {
       toast.error("Selected size is not available for this pizza");
       return;
     }
@@ -80,33 +77,31 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
       {
         onSuccess: () => {
           toast.success("WoW! Successfully added the pizza to your cart");
-          onSuccess?.();
         },
-        onError: (error) => {
+        onError: (error: Error) => {
           toast.error(error?.message || "Failed to add to cart");
         },
       }
     );
   };
 
-  // const handleOrderNow = () => {
-  //   handleAddToCart();
-  //   // You can add navigation to cart or checkout here
-  // };
- 
+  if (!singlePizza) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <section className="py-12  from-white to-orange-50">
+    <section className="py-12 from-white to-orange-50">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Left: Pizza Image */}
-          <div className="flex flex-col gap-4 w-full  mx-auto px-4">
+          <div className="flex flex-col gap-4 w-full mx-auto px-4">
             {/* Main Image */}
             <div className="relative bg-white rounded-lg overflow-hidden shadow-lg w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
               <Image
                 src={mainImage}
                 alt={singlePizza.name}
                 fill
-                className="object-cover w-full  h-full"
+                className="object-cover w-full h-full"
                 priority
               />
             </div>
@@ -143,19 +138,6 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
                 {singlePizza.name}
               </h1>
-              {/* <div className="flex items-center gap-2">
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5 fill-yellow-400 text-yellow-400"
-                    />
-                  ))}
-                </div>
-                <span className="text-gray-600 ml-2">
-                  5.00 ({singlePizza.totalSold || 0} sold)
-                </span>
-              </div> */}
             </div>
 
             {/* Description */}
@@ -189,29 +171,31 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
                 Choose Your Size
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {sizeOptions.map((option) => (
+                {sizeOptions.map((option, index) => (
                   <button
                     key={option.key}
-                    // onClick={() => setSelectedSize(option.key)}
+                    onClick={() => {
+                      const sizeKey = option.key.toLowerCase();
+                      if (sizeKey.includes('small') || sizeKey.includes('21')) {
+                        setSelectedSize('small');
+                      } else if (sizeKey.includes('medium') || sizeKey.includes('10')) {
+                        setSelectedSize('medium');
+                      } else if (sizeKey.includes('large') || sizeKey.includes('40')) {
+                        setSelectedSize('large');
+                      }
+                    }}
                     className={`p-3 rounded-lg cursor-pointer border-2 text-center transition-all ${
-                      selectedSize === option.key
+                      selectedSize === ['small', 'medium', 'large'][index]
                         ? "border-red-500 bg-red-50"
-                        : "border-red-500 bg-red-50  hover:border-gray-300"
+                        : "border-red-500 bg-red-50 hover:border-gray-300"
                     }`}
                   >
-                    {/* <p className="font-semibold text-gray-900">{option.size}</p> */}
                     <p className="flex justify-evenly items-center">
-
-                    <p className="font-semibold text-gray-900">Size: {option.size}</p>
-                    <p className="font-semibold text-gray-900">{option.pieces ? `Slice: ${option.pieces}`:''}</p>
+                      <span className="font-semibold text-gray-900">Size: {option.size}</span>
+                      {option.pieces && <span className="font-semibold text-gray-900">Slice: {option.pieces}</span>}
                     </p>
-
-                    {/* <p className="text-sm text-gray-500">
-                      {option.description}
-                    </p> */}
                     <p className="text-red-600 font-bold text-lg mt-2">
-
-                      {option.price ? `$${option?.price.toFixed(2)}`:'N/A'}
+                      ${option.price}
                     </p>
                   </button>
                 ))}
@@ -231,36 +215,21 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <a
-                href={
-                  "https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road"
-                }
-                target="_blank"
-                className="flex-1 cursor-pointer bg-white hover:bg-gray-50 text-red-600 border  font-semibold  rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              <button
+                onClick={() => handleAddToCart(singlePizza, selectedSize)}
+                disabled={!singlePizza.isAvailable}
+                className="flex-1 cursor-pointer bg-white hover:bg-gray-50 text-red-600 border border-red-600 font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <button
-                  // onClick={() => handleAddToCart(singlePizza!, selectedSize)} // Here we call handleAddToCart
-                  disabled={!singlePizza.isAvailable}
-                  className="flex-1 cursor-pointer bg-white hover:bg-gray-50 text-red-600 border border-red-600 font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <ShoppingCart className="w-5 h-5" />
-                  Add to Cart
-                </button>
-              </a>
+                <ShoppingCart className="w-5 h-5" />
+                Add to Cart
+              </button>
               <a
-                href={
-                  "https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road"
-                }
+                href="https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road"
                 target="_blank"
-                className="flex-1 cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed "
+                rel="noopener noreferrer"
+                className="flex-1 cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <button
-                // onClick={handleOrderNow}
-                // disabled={!singlePizza.isAvailable}
-                className="cursor-pointer"
-                >
-                  Order Now
-                </button>
+                Order Now
               </a>
             </div>
 
