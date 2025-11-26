@@ -163,13 +163,13 @@ if (isLoading) {
               pizza={pizza}
               onAddToCart={() => handleOpenSizeDialog(pizza, "cart")}
               onOrder={() => handleOpenSizeDialog(pizza, "order")}
-              // selectedSize={selectedSize}
-              // onSizeChange={setSelectedSize}
-              // onConfirmAction={handleConfirmAction}
-              // isDialogOpen={selectedPizza?._id === pizza._id}
-              // onCloseDialog={() => setSelectedPizza(null)}
-              // dialogType={dialogType}
-              // isPending={isPending}
+              selectedSize={selectedSize}
+              onSizeChange={setSelectedSize}
+              onConfirmAction={handleConfirmAction}
+              isDialogOpen={selectedPizza?._id === pizza._id}
+              onCloseDialog={() => setSelectedPizza(null)}
+              dialogType={dialogType}
+              isPending={isPending}
             />
           ))}
         </div>

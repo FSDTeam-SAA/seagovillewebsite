@@ -22,7 +22,7 @@ export function PizzaCard({
   pizza,
   onAddToCart,
   onOrder,
-  selectedSize = 0, // default to small (first price)
+  selectedSize = 0, 
   onSizeChange,
   onConfirmAction,
   isDialogOpen = false,
@@ -34,15 +34,15 @@ export function PizzaCard({
   
   // Safe price handling with fallbacks
   const getCurrentPrice = () => {
-    if (!pizza.price || !Array.isArray(pizza.price) || pizza.price.length === 0) {
+    if (!pizza?.price || !Array.isArray(pizza?.price) || pizza?.price.length === 0) {
       return 0; // Default price if price array is empty or undefined
     }
-    return pizza.price[selectedSize] || pizza.price[0] || 0;
+    return pizza?.price[selectedSize] || pizza?.price[0] || 0;
   };
 
   // Get size label safely
   const getSizeLabel = (index: number) => {
-    const sizes = ["Small", "Medium", "Large"];
+    const sizes = pizza?.sizes || [];
     return sizes[index] || "Small";
   };
 
@@ -63,7 +63,7 @@ export function PizzaCard({
   return (
     <>
       <div className="bg-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-        <Link href={`/menu/${pizza._id}`}>
+        <Link href={`/menu/${pizza?._id}`}>
           <div className="relative aspect-square bg-muted overflow-hidden">
             <Image
               src={imageUrl}
@@ -76,21 +76,21 @@ export function PizzaCard({
         </Link>
 
         <div className="p-4">
-          <Link href={`/menu/${pizza._id}`}>
+          <Link href={`/menu/${pizza?._id}`}>
             <h3 className="font-semibold text-base md:text-xl leading-[150%] mb-1 line-clamp-1">
-              {pizza.name}
+              {pizza?.name}
             </h3>
 
             <p className="text-sm md:text-base text-[#6C757D] mb-6 md:mb-10 line-clamp-2">
-              {pizza.description}
+              {pizza?.description}
             </p>
           </Link>
 
           {/* Size Selector (if multiple prices available) */}
-          {pizza.price && pizza.price.length > 1 && (
+          {pizza?.price && pizza?.price.length > 1 && (
             <div className="mb-4">
               <div className="flex gap-2 flex-wrap">
-                {pizza.price.map((price, index) => (
+                {pizza?.sizes?.map((price, index) => (
                   <button
                     key={index}
                     onClick={(e) => {

@@ -12,7 +12,8 @@ import { useAddToCartMutation } from "@/hooks/use-cart";
 export interface SizeOption {
   key: string;
   size: string;
-  price: number;
+  price: number[];
+  pieces?: number[]
   description: string;
 }
 
@@ -33,12 +34,14 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
     "Family size feast",
   ];
 
-  const sizeKeys = ["small", "medium", "large"] as const;
+  const sizeKeys = singlePizza.sizes as const;
 
   const sizeOptions: SizeOption[] = sizeKeys.map((key, index) => ({
     key,
-    size: `${singlePizza.pieces[index]} Pieces`,
+    
+    size: `${singlePizza.sizes[index]}`,
     price: singlePizza.price[index],
+    pieces:singlePizza.pieces ? singlePizza?.pieces[index] : undefined,
     description: descriptions[index],
   }));
 
@@ -90,7 +93,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
   //   handleAddToCart();
   //   // You can add navigation to cart or checkout here
   // };
-
+ 
   return (
     <section className="py-12  from-white to-orange-50">
       <div className="container mx-auto px-4 md:px-6">
@@ -193,15 +196,22 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
                     className={`p-3 rounded-lg cursor-pointer border-2 text-center transition-all ${
                       selectedSize === option.key
                         ? "border-red-500 bg-red-50"
-                        : "border-gray-200 bg-white hover:border-gray-300"
+                        : "border-red-500 bg-red-50  hover:border-gray-300"
                     }`}
                   >
-                    <p className="font-semibold text-gray-900">{option.size}</p>
-                    <p className="text-sm text-gray-500">
-                      {option.description}
+                    {/* <p className="font-semibold text-gray-900">{option.size}</p> */}
+                    <p className="flex justify-evenly items-center">
+
+                    <p className="font-semibold text-gray-900">Size: {option.size}</p>
+                    <p className="font-semibold text-gray-900">{option.pieces ? `Slice: ${option.pieces}`:''}</p>
                     </p>
+
+                    {/* <p className="text-sm text-gray-500">
+                      {option.description}
+                    </p> */}
                     <p className="text-red-600 font-bold text-lg mt-2">
-                      ${option.price}
+
+                      {option.price ? `$${option?.price.toFixed(2)}`:'N/A'}
                     </p>
                   </button>
                 ))}
@@ -210,7 +220,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
 
             {/* Availability */}
             <div
-              className={`inline-flex items-center px-3 py-1 w-21 rounded-full text-sm font-medium ${
+              className={`inline-flex items-center px-3 py-1 w-21 rounded-sm text-sm font-medium ${
                 singlePizza.isAvailable
                   ? "bg-green-100 text-green-800"
                   : "bg-red-100 text-red-800"
@@ -226,7 +236,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
                   "https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road"
                 }
                 target="_blank"
-                className="flex-1 cursor-pointer bg-white hover:bg-gray-50 text-red-600 border border-red-600 font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 cursor-pointer bg-white hover:bg-gray-50 text-red-600 border  font-semibold  rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <button
                   // onClick={() => handleAddToCart(singlePizza!, selectedSize)} // Here we call handleAddToCart
@@ -256,7 +266,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
 
             {/* Additional Info */}
             <div className="bg-gray-50 rounded-lg p-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-4 text-sm lg:text-base">
                 <div>
                   <span className="font-semibold">Category:</span>
                   <span className="ml-2 text-gray-600 capitalize">

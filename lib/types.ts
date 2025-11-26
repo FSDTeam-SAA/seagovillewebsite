@@ -115,16 +115,16 @@ export interface MenuItem {
   category: string;
   description: string;
 
-  price: number[];     // Array of prices [small, medium, large]
-  pieces: number[];    // Array of pieces [small, medium, large]
-  sizes: string[];     // Add this if missing
+  price?: number[];
+  pieces: number[];
+  sizes: string[];
 
   images: MenuImage[];
-  ingredients: string[]; // Add this if missing
+  ingredients: string[];
 
   isAvailable: boolean;
-  totalSold: number;    // Add this if missing
-  
+  totalSold?: number;
+
   createdAt: string;
   updatedAt: string;
 }
