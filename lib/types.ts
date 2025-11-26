@@ -103,35 +103,35 @@ export interface Order {
   createdAt: Date;
 }
 
-export interface MenuImage {
+// lib/types.ts
+export interface Image {
+  _id: string;
   public_id: string;
   url: string;
-  _id: string;
-}
-
-export interface MenuPrice {
-  small: number;
-  medium: number;
-  large: number;
 }
 
 export interface MenuItem {
-  price: MenuPrice;
   _id: string;
   name: string;
   category: string;
   description: string;
-  images: MenuImage[];
+  price: number[];
+  sizes: string[];
+  pieces: number[];
+  images: Image[];
+  isAvailable: boolean;
+  totalSold: number;
   createdAt: string;
   updatedAt: string;
-  isAvailable: boolean;
+  ingredients?: string[];
 }
 
-export interface Meta {
-  total: number;
-  page: number;
-  totalPages: number;
-  limit: number;
+export interface MenuResponse {
+  success: boolean;
+  message: string;
+  statusCode: number;
+  data: MenuItem;
+  similar: MenuItem[];
 }
 
 export interface MenuApiResponse {
@@ -139,33 +139,13 @@ export interface MenuApiResponse {
   message?: string;
   statusCode?: number;
   data?: MenuItem[];
-  meta?: Meta;
+  meta?: {
+    total: number;
+    page: number;
+    totalPages: number;
+    limit: number;
+  };
 }
 
-///
-
-export interface ProductImage {
-  public_id: string;
-  url: string;
-  _id: string;
-}
-
-export interface ProductPrice {
-  small: number;
-  medium: number;
-  large: number;
-}
-
-export interface Product {
-  _id: string;
-  name: string;
-  category: string;
-  description: string;
-  price: ProductPrice;
-  images: ProductImage[];
-  createdAt: string; // or Date if you convert
-  updatedAt: string; // or Date if you convert
-  isAvailable: boolean;
-}
-
-///
+// Alias for Product to maintain compatibility
+export type Product = MenuItem;
