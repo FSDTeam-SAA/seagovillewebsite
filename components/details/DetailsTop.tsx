@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { MenuResponse } from "@/lib/detailstype";
 import { MenuItem } from "@/lib/types";
 import { useAddToCartMutation } from "@/hooks/use-cart";
+import Link from "next/link";
+import { Button } from "../ui/button";
 
 export interface SizeOption {
   key: string;
@@ -19,7 +21,9 @@ export interface SizeOption {
 export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
   const { mutate: addToCartMutation } = useAddToCartMutation();
   const singlePizza = pizza?.data;
-  const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("small");
+  const [selectedSize, setSelectedSize] = useState<
+    "small" | "medium" | "large"
+  >("small");
 
   const [mainImage, setMainImage] = useState(
     singlePizza?.images?.[0]?.url || "/detail2.jpg"
@@ -32,13 +36,14 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
   ];
 
   // Create size options safely
-  const sizeOptions: SizeOption[] = singlePizza?.sizes?.map((size, index) => ({
-    key: size,
-    size: size,
-    price: singlePizza.price?.[index] || 0,
-    pieces: singlePizza.pieces?.[index],
-    description: descriptions[index] || "Delicious pizza size",
-  })) || [];
+  const sizeOptions: SizeOption[] =
+    singlePizza?.sizes?.map((size, index) => ({
+      key: size,
+      size: size,
+      price: singlePizza.price?.[index] || 0,
+      pieces: singlePizza.pieces?.[index],
+      description: descriptions[index] || "Delicious pizza size",
+    })) || [];
 
   const ingredients =
     singlePizza?.ingredients && singlePizza.ingredients.length > 0
@@ -58,32 +63,32 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
       ? singlePizza.images.map((img) => img.url)
       : [singlePizza?.images?.[0]?.url || "/placeholder.svg"];
 
-  const handleAddToCart = (
-    pizza: MenuItem,
-    size: "small" | "medium" | "large" = "small"
-  ) => {
-    // Find the index of the selected size
-    const sizeIndex = singlePizza.sizes.findIndex(s => 
-      s.toLowerCase() === size
-    );
-    
-    if (sizeIndex === -1 || !singlePizza.price?.[sizeIndex]) {
-      toast.error("Selected size is not available for this pizza");
-      return;
-    }
+  // const handleAddToCart = (
+  //   pizza: MenuItem,
+  //   size: "small" | "medium" | "large" = "small"
+  // ) => {
+  //   // Find the index of the selected size
+  //   // const sizeIndex = singlePizza.sizes.findIndex(
+  //   //   (s) => s.toLowerCase() === size
+  //   // );
 
-    addToCartMutation(
-      { menuId: pizza._id, size },
-      {
-        onSuccess: () => {
-          toast.success("WoW! Successfully added the pizza to your cart");
-        },
-        onError: (error: Error) => {
-          toast.error(error?.message || "Failed to add to cart");
-        },
-      }
-    );
-  };
+  //   // if (sizeIndex === -1 || !singlePizza.price?.[sizeIndex]) {
+  //   //   toast.error("Selected size is not available for this pizza");
+  //   //   return;
+  //   // }
+
+  //   addToCartMutation(
+  //     { menuId: pizza._id, size },
+  //     {
+  //       onSuccess: () => {
+  //         toast.success("WoW! Successfully added the pizza to your cart");
+  //       },
+  //       onError: (error: Error) => {
+  //         toast.error(error?.message || "Failed to add to cart");
+  //       },
+  //     }
+  //   );
+  // };
 
   if (!singlePizza) {
     return <div>Loading...</div>;
@@ -92,7 +97,7 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
   return (
     <section className="py-12 from-white to-orange-50">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Left: Pizza Image */}
           <div className="flex flex-col gap-4 w-full mx-auto px-4">
             {/* Main Image */}
@@ -166,39 +171,144 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
             </div>
 
             {/* Size Selection */}
+            {/* Size Selection */}
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Choose Your Size
+                Sizes
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {sizeOptions.map((option, index) => (
-                  <button
-                    key={option.key}
-                    onClick={() => {
-                      const sizeKey = option.key.toLowerCase();
-                      if (sizeKey.includes('small') || sizeKey.includes('21')) {
-                        setSelectedSize('small');
-                      } else if (sizeKey.includes('medium') || sizeKey.includes('10')) {
-                        setSelectedSize('medium');
-                      } else if (sizeKey.includes('large') || sizeKey.includes('40')) {
-                        setSelectedSize('large');
-                      }
-                    }}
-                    className={`p-3 rounded-lg cursor-pointer border-2 text-center transition-all ${
-                      selectedSize === ['small', 'medium', 'large'][index]
-                        ? "border-red-500 bg-red-50"
-                        : "border-red-500 bg-red-50 hover:border-gray-300"
-                    }`}
-                  >
-                    <p className="flex justify-evenly items-center">
-                      <span className="font-semibold text-gray-900">Size: {option.size}</span>
-                      {option.pieces && <span className="font-semibold text-gray-900">Slice: {option.pieces}</span>}
-                    </p>
-                    <p className="text-red-600 font-bold text-lg mt-2">
-                      ${option.price}
-                    </p>
-                  </button>
-                ))}
+                {singlePizza.sizes.map((option, index) => {
+                  // const sizeKey = option.key.toLowerCase();
+                  // let sizeValue = "";
+
+                  // if (sizeKey.includes("small") || sizeKey.includes("21")) {
+                  //   sizeValue = "small";
+                  // } else if (
+                  //   sizeKey.includes("medium") ||
+                  //   sizeKey.includes("10")
+                  // ) {
+                  //   sizeValue = "medium";
+                  // } else if (
+                  //   sizeKey.includes("large") ||
+                  //   sizeKey.includes("40")
+                  // ) {
+                  //   sizeValue = "large";
+                  // }
+
+                  return (
+                    <button
+                      key={index}
+                     
+                      className={`px-3 py-1 rounded-lg cursor-pointer border-2 text-center transition-all ${
+                        selectedSize === option
+                          ? "border-red-500 bg-red-50"
+                          : "border-red-500 bg-red-50 hover:border-gray-300"
+                      }`}
+                    >
+                      <p className="flex justify-evenly items-center">
+                        <span className="font-semibold text-gray-900">
+                          Size: {option}
+                        </span>
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Slices
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {singlePizza.pieces.map((option, index) => {
+                  // const sizeKey = option.key.toLowerCase();
+                  // let sizeValue = "";
+
+                  // if (sizeKey.includes("small") || sizeKey.includes("21")) {
+                  //   sizeValue = "small";
+                  // } else if (
+                  //   sizeKey.includes("medium") ||
+                  //   sizeKey.includes("10")
+                  // ) {
+                  //   sizeValue = "medium";
+                  // } else if (
+                  //   sizeKey.includes("large") ||
+                  //   sizeKey.includes("40")
+                  // ) {
+                  //   sizeValue = "large";
+                  // }
+
+                  return (
+                    <button
+                      key={index}
+                      // onClick={() =>
+                      //   setSelectedSize(
+                      //     sizeValue as "small" | "medium" | "large"
+                      //   )
+                      // }
+                      className={`px-3 py-1 rounded-lg cursor-pointer border-2 text-center transition-all ${
+                        option === option
+                          ? "border-red-500 bg-red-50"
+                          : "border-red-500 bg-red-50 hover:border-gray-300"
+                      }`}
+                    >
+                      <p className="flex justify-evenly items-center">
+                        {option && (
+                          <span className="font-semibold text-gray-900">
+                            Slice: {option}
+                          </span>
+                        )}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Prices
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {singlePizza.price.map((option, index) => {
+                  // const sizeKey = option.key.toLowerCase();
+                  // let sizeValue = "";
+
+                  // if (sizeKey.includes("small") || sizeKey.includes("21")) {
+                  //   sizeValue = "small";
+                  // } else if (
+                  //   sizeKey.includes("medium") ||
+                  //   sizeKey.includes("10")
+                  // ) {
+                  //   sizeValue = "medium";
+                  // } else if (
+                  //   sizeKey.includes("large") ||
+                  //   sizeKey.includes("40")
+                  // ) {
+                  //   sizeValue = "large";
+                  // }
+
+                  return (
+                    <button
+                      key={index}
+                      // onClick={() =>
+                      //   setSelectedSize(
+                      //     sizeValue as "small" | "medium" | "large"
+                      //   )
+                      // }
+                      className={`px-3 py-1 rounded-lg cursor-pointer border-2 text-center transition-all ${
+                        option === option
+                          ? "border-red-500 bg-red-50"
+                          : "border-red-500 bg-red-50 hover:border-gray-300"
+                      }`}
+                    >
+                      <p className="text-red-600 font-bold text-lg ">
+                        ${option}
+                      </p>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -215,22 +325,28 @@ export const DetailsTop = ({ pizza }: { pizza: MenuResponse }) => {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={() => handleAddToCart(singlePizza, selectedSize)}
-                disabled={!singlePizza.isAvailable}
-                className="flex-1 cursor-pointer bg-white hover:bg-gray-50 text-red-600 border border-red-600 font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              <Link
+                className="flex-1 cursor-pointer  text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                href="https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road"
+                target="_blank"
               >
-                <ShoppingCart className="w-5 h-5" />
-                Add to Cart
-              </button>
-              <a
+                <button
+                  // onClick={() => handleAddToCart(singlePizza, selectedSize)}
+                  disabled={!singlePizza.isAvailable}
+                  className="flex-1 cursor-pointer bg-white hover:bg-gray-50 text-red-600 border border-red-600 font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  Add to Cart
+                </button>
+              </Link>
+              <Link
                 href="https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 cursor-pointer  text-white font-semibold  rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Order Now
-              </a>
+                <Button  className="flex-1 cursor-pointer bg-red-600 hover:bg-red-700  text-white border border-red-600 font-semibold py-6 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Order Now</Button>
+              </Link>
             </div>
 
             {/* Additional Info */}
