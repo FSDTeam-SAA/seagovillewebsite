@@ -22,9 +22,6 @@ export function PizzaCard({
 
   selectedSize = 0,
   onSizeChange,
-
-
-
 }: PizzaCardProps) {
   const imageUrl = pizza.images?.[0]?.url || "/noimage.jpg";
 
@@ -87,21 +84,26 @@ export function PizzaCard({
           </Link>
 
           {/* Size Selector (if multiple prices available) */}
-          {pizza?.price && pizza?.price.length > 1 && (
-            <div className="mb-4">
+
+          {pizza?.sizes && pizza?.sizes.length > 1 && (
+            <div className="mb-4 flex gap-1">
+              <p className="text-sm font-semibold text-gray-700 bg-gray-100 px-2 py-1 rounded">
+                Sizes:
+              </p>
+
               <div className="flex gap-2 flex-wrap">
                 {pizza?.sizes?.map((price, index) => (
                   <button
                     key={index}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onSizeChange?.(index);
-                    }}
+                    // onClick={(e) => {
+                    //   e.preventDefault();
+                    //   e.stopPropagation();
+                    //   onSizeChange?.(index);
+                    // }}
                     className={`px-3 py-1 text-sm rounded border transition-colors ${
                       selectedSize === index
                         ? "border-[#D62828] bg-red-50 text-[#D62828] font-semibold"
-                        : "border-gray-300 text-gray-600 hover:border-gray-400"
+                        : "border-[#D62828] bg-red-50 text-[#D62828] hover:border-gray-400"
                     }`}
                   >
                     {getSizeLabel(index)}
