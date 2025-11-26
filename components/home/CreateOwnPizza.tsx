@@ -121,7 +121,10 @@ const CreateOwnPizza = () => {
 
             {/* CTA Button */}
             <div className="pt-6">
-              <Link href="/builder">
+              <Link
+                href={`https://order.toasttab.com/online/craving-pizza-seagoville-208-hall-road`}
+                target="_blank"
+              >
                 <Button
                   size="lg"
                   className="bg-[#D62828] hover:bg-[#d64b28ee] text-white px-8 py-4 text-lg font-semibold rounded-md cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300"
