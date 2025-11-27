@@ -117,7 +117,7 @@ const Navbar = () => {
               </Button>
             </div> */}
 
-            <Link href="/cart">
+            {/* <Link href="/cart">
               <Button
                 variant="ghost"
                 size="icon"
@@ -130,7 +130,7 @@ const Navbar = () => {
                   </span>
                 )}
               </Button>
-            </Link>
+            </Link> */}
 
             {/* <Button className="hidden sm:inline-flex bg-primary hover:bg-primary/90">
               Order Now
